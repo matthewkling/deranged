@@ -17,3 +17,5 @@ Imports:
     rlang,
     stats,
     utils
+URL: https://github.com/matthewkling/stranger
+BugReports: https://github.com/matthewkling/stranger/issues
