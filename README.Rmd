@@ -30,6 +30,9 @@ You can install the development version of stranger from [GitHub](https://github
 devtools::install_github("matthewkling/stranger")
 ```
 
+If you're on MacOS and encounter compilation errors when attempting to install the package, installing the [latest version of gfortran](https://github.com/fxcoudert/gfortran-for-macOS/releases) may solve the issue.
+
+
 ## Example
 
 In this toy example we'll run a range simulation for an imaginary plant species. We'll use a stage-based population matrix model representing three life history stages: seeds, juveniles, and adults.
@@ -92,12 +95,15 @@ The result is an array of adult populations over space and time. The first plot 
 
 ```{r timeseries, message = FALSE, warning = FALSE, echo = FALSE}
 library(tidyverse)
+set.seed(1)
 
 f <- d %>% as.data.frame.table() %>%
   setNames(c("y", "x", "t", "N")) %>%
-  mutate_all(as.integer)
+  mutate_all(as.integer) %>% ungroup()
 
 p1 <- f %>% 
+  filter(between(x, 5, max(x) - 4),
+         between(y, 5, max(y) - 4)) %>%
   mutate(cell = paste(x, y)) %>%
   filter(cell %in% sample(unique(cell), 10)) %>%
   ggplot(aes(t, N, color = cell)) + 
@@ -108,13 +114,14 @@ p1 <- f %>%
 print(p1)
 
 p2 <- f %>% filter(t %in% seq(20, 200, 20)) %>%
+  mutate(N = ifelse(N == 0, NA, N)) %>%
   ggplot(aes(x, y, fill = N)) + 
   facet_wrap(~ t, nrow = 2, labeller = label_both) +
   geom_raster() + 
   theme_void() +
   theme(legend.position = "bottom") +
   coord_fixed() +
-  scale_fill_gradientn(colors = c("khaki", "orange", "red", "black"), trans = "log10") +
+  scale_fill_gradientn(colors = c("khaki", "orange", "darkred", "black")) +
   labs(fill = "N adults")
 print(p2)
 ```

@@ -21,6 +21,11 @@ You can install the development version of stranger from
 devtools::install_github("matthewkling/stranger")
 ```
 
+If you’re on MacOS and encounter compilation errors when attempting to
+install the package, installing the [latest version of
+gfortran](https://github.com/fxcoudert/gfortran-for-macOS/releases) may
+solve the issue.
+
 ## Example
 
 In this toy example we’ll run a range simulation for an imaginary plant
