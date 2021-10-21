@@ -1,5 +1,5 @@
 Package: stranger
-Title: Spatiotemporal range modeling in R
+Title: Spatiotemporal range simulation in R
 Version: 0.0.0.9000
 Authors@R: 
     person("Matthew", "Kling", email = "mkling@uvm.edu", role = c("aut", "cre"))

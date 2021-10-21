@@ -16,7 +16,7 @@ species_template <- function(n_env = 1,
        gamma = array(0, c(3, 3, n_env),
                      dimnames = list(names, names, paste0("v", 1:n_env))),
        kernel = list(fun = dlognormal,
-                     params = list(L = .2, S = 2)))
+                     params = list(L = 1, S = 1)))
 }
 
 
@@ -104,7 +104,14 @@ simulate <- function(sp, ls, diameter = 7, n_steps = 100, record = 3){
   neighbors <- neighborhood(diameter, sp$kernel)
 
   n <- as.array(ls$n)
-  d <- array(NA, c(dim(n)[1:2], n_steps))
+  # d <- array(NA, c(dim(n)[1:2], n_steps),
+  #            dimnames = list(paste0("y", 1:dim(n)[1]),
+  #                            paste0("x", 1:dim(n)[2]),
+  #                            paste0("t", 1:n_steps)))
+  d <- array(NA, c(dim(n)[1:2], n_steps),
+             dimnames = list(1:dim(n)[1],
+                             1:dim(n)[2],
+                             1:n_steps))
 
   e <- as.array(ls$e)
   if(dim(e)[3] == n_steps){ ei <- 1:n_steps}else{ei <- rep(1L, n_steps)}
