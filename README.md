@@ -42,11 +42,6 @@ gradient from 0 to 1.
 
 ``` r
 library(stranger)
-#> 
-#> Attaching package: 'stranger'
-#> The following object is masked from 'package:stats':
-#> 
-#>     simulate
 
 stages <- c("s", "j", "a") # names for life history stages
 ls <- landscape_template(n_row = 25, n_col = 25, names = stages) # spatial data template

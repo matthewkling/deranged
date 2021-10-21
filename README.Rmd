@@ -39,7 +39,7 @@ In this toy example we'll run a range simulation for an imaginary plant species.
 
 First we'll mock up some spatial data. The convenience function `landscape_template` generates a skeleton object with the necessary data structure, a list with two components. The first piece, `n`, is a 3-D array of initial population sizes for each life history stage for each spatial grid cell; here we'll start with 10 adults in one of the grid cells. The second piece, `e`, is a 4-D array of environmental data, which maximally can include multiple environmental variables that vary spatially and temporally; in this example we'll use a single, time-invariant environmental grid with values ranging in a spatial gradient from 0 to 1.
 
-```{r spatial}
+```{r spatial, message = FALSE, warning = FALSE}
 library(stranger)
 
 stages <- c("s", "j", "a") # names for life history stages
