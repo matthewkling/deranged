@@ -88,9 +88,9 @@ d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)
 ```
-The result is an array of adult populations over space and time. The plots below show population time series for 10 random grid cells, and snapshots of spatial population patterns over time.  
+The result is an array of adult populations over space and time. The first plot below shows population time series for 10 random grid cells, and the second shows snapshots of spatial population patterns over time.  
 
-```{r timeseries, message = FALSE, echo = FALSE}
+```{r timeseries, message = FALSE, warning = FALSE, echo = FALSE}
 library(tidyverse)
 
 f <- d %>% as.data.frame.table() %>%

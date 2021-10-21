@@ -113,14 +113,7 @@ d <- simulate(sp, ls, # data and parameter inputs from above
 ```
 
 The result is an array of adult populations over space and time. The
-plots below show population time series for 10 random grid cells, and
-snapshots of spatial population patterns over time.
+first plot below shows population time series for 10 random grid cells,
+and the second shows snapshots of spatial population patterns over time.
 
-    #> Warning: package 'ggplot2' was built under R version 4.0.5
-    #> Warning: package 'dplyr' was built under R version 4.0.5
-
-<img src="man/figures/README-timeseries-1.png" width="100%" />
-
-    #> Warning: Transformation introduced infinite values in discrete y-axis
-
-<img src="man/figures/README-timeseries-2.png" width="100%" />
+<img src="man/figures/README-timeseries-1.png" width="100%" /><img src="man/figures/README-timeseries-2.png" width="100%" />
