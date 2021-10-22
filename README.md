@@ -69,10 +69,9 @@ values (environmental dependence). A given transition probability is
 calculated as the intercept term from the `alpha` matrix, plus the
 coefficients from the `beta` array multiplied by population levels, plus
 coefficients from the `gamma` array multiplied by environmental values.
-(Note that for the current package version, the fecundity parameter
-`["a", "s"]` is the one component that’s not a probability.) In this
-example we’ll make juvenile survival depend on the environment, and
-we’ll make juvenile-adult transitions depend on the number of adults.
+In this example we’ll make juvenile survival depend on the environment,
+and we’ll make juvenile-adult transitions depend on the number of
+adults.
 
 The other parameters control dispersal distances. Users can supply any
 arbitrary probability density function, but for now we’ll stick with the
@@ -84,8 +83,9 @@ sp <- species_template(n_env = dim(ls$e)[4], names = stages)
 
 # invariant transitions
 sp$alpha["s", "j"] <- .01
-sp$alpha["a", "s"] <- 200
+sp$alpha["a", "s"] <- .5
 sp$alpha["a", "a"] <- .9
+sp$fecundity <- 200
 
 # environmentally dependent juvenile survival
 sp$alpha["j", "j"] <- 0
@@ -114,6 +114,9 @@ d <- simulate(sp, ls, # data and parameter inputs from above
 
 The result is an array of adult populations over space and time. The
 first plot below shows population time series for 10 random grid cells,
-and the second shows snapshots of spatial population patterns over time.
+with populations in many cells leveling off due to density dependence.
+The second plot shows snapshots of spatial population patterns over
+time, with an east-west gradient in population size resulting from the
+spatial environmental gradient.
 
 <img src="man/figures/README-timeseries-1.png" width="100%" /><img src="man/figures/README-timeseries-2.png" width="100%" />

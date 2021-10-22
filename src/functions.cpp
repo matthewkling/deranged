@@ -3,8 +3,9 @@ using namespace Rcpp;
 
 
 double rbinom_mms(arma::mat n,
-                  arma::mat p) {
-  std::default_random_engine gen;
+                  arma::mat p,
+                  int seed = 1) {
+  std::default_random_engine gen(seed);
   arma::vec y(n.n_elem);
   for(arma::uword i = 0; i < n.n_elem; ++i) {
     std::binomial_distribution<> d(n(i), p(i));
@@ -14,8 +15,9 @@ double rbinom_mms(arma::mat n,
 }
 
 arma::mat rbinom_mmm(arma::mat n,
-                     arma::mat p) {
-  std::default_random_engine gen;
+                     arma::mat p,
+                     int seed = 1) {
+  std::default_random_engine gen(seed);
   arma::mat y(n.n_rows, n.n_cols);
   for(arma::uword i = 0; i < n.n_elem; ++i) {
     std::binomial_distribution<> d(n(i), p(i));
@@ -29,12 +31,14 @@ arma::mat rbinom_mmm(arma::mat n,
 //' @param S A matrix of seed counts across a spatial grid.
 //' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
 //' @param rand Randomize dispersal? (Boolean, default = TRUE).
+//' @param seed Integer to seed random number generator.
 //' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 //' @export
 // [[Rcpp::export]]
 arma::mat disperse(arma::mat S,
                    arma::mat N,
-                   bool rand = true) {
+                   bool rand = true,
+                   int seed = 1) {
   int r = (N.n_rows - 1) / 2;
   arma::mat T(S.n_rows + r * 2, S.n_cols + r * 2, arma::fill::zeros);
   T.submat(r, r, S.n_rows + r - 1, S.n_cols + r - 1) = S;
@@ -44,7 +48,8 @@ arma::mat disperse(arma::mat S,
     for(arma::uword b = 0; b < S.n_cols; ++b) {
 
       if (rand) {
-        U(a, b) = rbinom_mms(T.submat(a, b, a + r * 2, b + r * 2), N);
+        U(a, b) = rbinom_mms(T.submat(a, b, a + r * 2, b + r * 2), N, seed);
+        ++seed;
       } else {
         U(a, b) = accu(T.submat(a, b, a + r * 2, b + r * 2) % N);
       }
@@ -62,7 +67,9 @@ arma::mat disperse(arma::mat S,
 //' @param alpha A matrix of transition intercepts (from, to).
 //' @param beta A 3-D array of density dependence effects (from, to, modifier).
 //' @param gamma A 3-D array of environmental effects (from, to, variable).
+//' @param fecundity Multiplier applied to first life stage after transition.
 //' @param rand Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).
+//' @param seed Integer to seed random number generator.
 //' @return A 3-D array of population numbers for each life stage.
 //' @export
 // [[Rcpp::export]]
@@ -71,18 +78,17 @@ arma::cube transition(arma::cube N,
                       arma::mat alpha,
                       arma::cube beta,
                       arma::cube gamma,
-                      bool rand = true) {
+                      double fecundity = 1,
+                      bool rand = true,
+                      int seed = 1) {
 
   arma::cube NN(size(N), arma::fill::zeros);
-
-  double F = alpha(2, 0); // fecundity
-  alpha(2, 0) = 1;
 
   arma::mat p(N.n_rows, N.n_cols, arma::fill::zeros);
   double m = 0;
 
-  for(int t = 0; t < 3; ++t) { // target (to)
-    for(int s = 0; s < 3; ++s) { // source (from)
+  for(arma::uword t = 0; t < alpha.n_cols; ++t) { // target (to)
+    for(arma::uword s = 0; s < alpha.n_rows; ++s) { // source (from)
 
       if (alpha(s, t) +
           accu(beta.tube(s, t)) +
@@ -109,7 +115,8 @@ arma::cube transition(arma::cube N,
       }
 
       if (rand) {
-        NN.slice(t) = NN.slice(t) + rbinom_mmm(N.slice(s), clamp(p, 0, 1));
+        NN.slice(t) = NN.slice(t) + rbinom_mmm(N.slice(s), clamp(p, 0, 1), seed);
+        ++seed;
       } else {
         NN.slice(t) = NN.slice(t) + N.slice(s) % clamp(p, 0, 1);
       }
@@ -117,8 +124,10 @@ arma::cube transition(arma::cube N,
     }
   }
 
-  alpha(2, 0) = F;
-  NN.slice(0) = NN.slice(0) * F;
+  if (fecundity != 1) {
+    NN.slice(0) = NN.slice(0) * fecundity;
+  }
 
   return NN;
 }
+

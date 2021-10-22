@@ -4,7 +4,7 @@
 \alias{transition}
 \title{Perform a randomized stage-based demographic transition}
 \usage{
-transition(N, E, alpha, beta, gamma, rand = TRUE)
+transition(N, E, alpha, beta, gamma, fecundity = 1, rand = TRUE, seed = 1L)
 }
 \arguments{
 \item{N}{A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).}
@@ -17,7 +17,11 @@ transition(N, E, alpha, beta, gamma, rand = TRUE)
 
 \item{gamma}{A 3-D array of environmental effects (from, to, variable).}
 
+\item{fecundity}{Multiplier applied to first life stage after transition.}
+
 \item{rand}{Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).}
+
+\item{seed}{Integer to seed random number generator.}
 }
 \value{
 A 3-D array of population numbers for each life stage.

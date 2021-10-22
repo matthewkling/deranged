@@ -6,10 +6,11 @@
 #' @param S A matrix of seed counts across a spatial grid.
 #' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
 #' @param rand Randomize dispersal? (Boolean, default = TRUE).
+#' @param seed Integer to seed random number generator.
 #' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 #' @export
-disperse <- function(S, N, rand = TRUE) {
-    .Call(`_stranger_disperse`, S, N, rand)
+disperse <- function(S, N, rand = TRUE, seed = 1L) {
+    .Call(`_stranger_disperse`, S, N, rand, seed)
 }
 
 #' Perform a randomized stage-based demographic transition
@@ -19,10 +20,12 @@ disperse <- function(S, N, rand = TRUE) {
 #' @param alpha A matrix of transition intercepts (from, to).
 #' @param beta A 3-D array of density dependence effects (from, to, modifier).
 #' @param gamma A 3-D array of environmental effects (from, to, variable).
+#' @param fecundity Multiplier applied to first life stage after transition.
 #' @param rand Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).
+#' @param seed Integer to seed random number generator.
 #' @return A 3-D array of population numbers for each life stage.
 #' @export
-transition <- function(N, E, alpha, beta, gamma, rand = TRUE) {
-    .Call(`_stranger_transition`, N, E, alpha, beta, gamma, rand)
+transition <- function(N, E, alpha, beta, gamma, fecundity = 1, rand = TRUE, seed = 1L) {
+    .Call(`_stranger_transition`, N, E, alpha, beta, gamma, fecundity, rand, seed)
 }
 
