@@ -28,11 +28,13 @@ arma::mat rbinom_mmm(arma::mat n,
 //'
 //' @param S A matrix of seed counts across a spatial grid.
 //' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
+//' @param rand Randomize dispersal? (Boolean, default = TRUE).
 //' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 //' @export
 // [[Rcpp::export]]
 arma::mat disperse(arma::mat S,
-                   arma::mat N) {
+                   arma::mat N,
+                   bool rand = true) {
   int r = (N.n_rows - 1) / 2;
   arma::mat T(S.n_rows + r * 2, S.n_cols + r * 2, arma::fill::zeros);
   T.submat(r, r, S.n_rows + r - 1, S.n_cols + r - 1) = S;
@@ -40,7 +42,13 @@ arma::mat disperse(arma::mat S,
 
   for(arma::uword a = 0; a < S.n_rows; ++a) {
     for(arma::uword b = 0; b < S.n_cols; ++b) {
-      U(a, b) = rbinom_mms(T.submat(a, b, a + r * 2, b + r * 2), N);
+
+      if (rand) {
+        U(a, b) = rbinom_mms(T.submat(a, b, a + r * 2, b + r * 2), N);
+      } else {
+        U(a, b) = accu(T.submat(a, b, a + r * 2, b + r * 2) % N);
+      }
+
     }
   }
   return U;
@@ -52,8 +60,9 @@ arma::mat disperse(arma::mat S,
 //' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
 //' @param E A 4-D array of environmental data (x, y, time, variable).
 //' @param alpha A matrix of transition intercepts (from, to).
-//' @param beta A 3-D array of density dependence effects (from, to, influencer).
+//' @param beta A 3-D array of density dependence effects (from, to, modifier).
 //' @param gamma A 3-D array of environmental effects (from, to, variable).
+//' @param rand Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).
 //' @return A 3-D array of population numbers for each life stage.
 //' @export
 // [[Rcpp::export]]
@@ -61,7 +70,8 @@ arma::cube transition(arma::cube N,
                       arma::cube E,
                       arma::mat alpha,
                       arma::cube beta,
-                      arma::cube gamma) {
+                      arma::cube gamma,
+                      bool rand = true) {
 
   arma::cube NN(size(N), arma::fill::zeros);
 
@@ -98,7 +108,12 @@ arma::cube transition(arma::cube N,
         p = p + E.slice(e) * m;
       }
 
-      NN.slice(t) = NN.slice(t) + rbinom_mmm(N.slice(s), clamp(p, 0, 1));
+      if (rand) {
+        NN.slice(t) = NN.slice(t) + rbinom_mmm(N.slice(s), clamp(p, 0, 1));
+      } else {
+        NN.slice(t) = NN.slice(t) + N.slice(s) % clamp(p, 0, 1);
+      }
+
     }
   }
 

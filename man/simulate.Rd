@@ -4,7 +4,7 @@
 \alias{simulate}
 \title{Run a multi-year range simulation}
 \usage{
-simulate(sp, ls, diameter = 7, n_steps = 100, record = 3)
+simulate(sp, ls, diameter = 7, n_steps = 100, record = 3, randomize = TRUE)
 }
 \arguments{
 \item{sp}{Species parameter list, following \code{species_template()}.}
@@ -15,7 +15,9 @@ simulate(sp, ls, diameter = 7, n_steps = 100, record = 3)
 
 \item{n_steps}{Number of time steps to simulate (integer).}
 
-\item{record}{Age class index to record and return (integer).}
+\item{record}{Index of age class to record and return (integer).}
+
+\item{randomize}{Should demography and dispersal be randomized (logical)?}
 }
 \value{
 An array of population values over space and time, for the class specified in \code{record}.

@@ -4,12 +4,14 @@
 \alias{disperse}
 \title{Seed dispersal across a spatial grid}
 \usage{
-disperse(S, N)
+disperse(S, N, rand = TRUE)
 }
 \arguments{
 \item{S}{A matrix of seed counts across a spatial grid.}
 
 \item{N}{A neighbor matrix, e.g. produced by \code{neighborhood()}.}
+
+\item{rand}{Randomize dispersal? (Boolean, default = TRUE).}
 }
 \value{
 A matrix of post-dispersal seed counts of the same dimension as \code{S}.

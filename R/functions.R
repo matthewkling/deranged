@@ -95,19 +95,22 @@ neighborhood <- function(diameter, kernel){
 #' @param ls Landscape spatial data list, following \code{landscape_template()}.
 #' @param diameter Neighborhood size (integer).
 #' @param n_steps Number of time steps to simulate (integer).
-#' @param record Age class index to record and return (integer).
+#' @param record Index of age class to record and return (integer).
+#' @param randomize Should demography and dispersal be randomized (logical)?
 #' @return An array of population values over space and time, for the class specified in \code{record}.
 #' @export
 #' @importFrom utils setTxtProgressBar txtProgressBar
-simulate <- function(sp, ls, diameter = 7, n_steps = 100, record = 3){
+simulate <- function(sp,
+                     ls,
+                     diameter = 7,
+                     n_steps = 100,
+                     record = 3,
+                     randomize = TRUE){
 
   neighbors <- neighborhood(diameter, sp$kernel)
 
   n <- as.array(ls$n)
-  # d <- array(NA, c(dim(n)[1:2], n_steps),
-  #            dimnames = list(paste0("y", 1:dim(n)[1]),
-  #                            paste0("x", 1:dim(n)[2]),
-  #                            paste0("t", 1:n_steps)))
+
   d <- array(NA, c(dim(n)[1:2], n_steps),
              dimnames = list(1:dim(n)[1],
                              1:dim(n)[2],
@@ -121,8 +124,9 @@ simulate <- function(sp, ls, diameter = 7, n_steps = 100, record = 3){
     d[ , , i] <- n[ , , record]
     n <- transition(n,
                     E = array(e[, , ei[i], ], dim(e)[c(1, 2, 4)]),
-                    alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma)
-    n[, , 1] <- disperse(n[, , 1], neighbors)
+                    alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma,
+                    rand = randomize)
+    n[, , 1] <- disperse(n[, , 1], neighbors, rand = randomize)
     setTxtProgressBar(pb, i)
   }
 

@@ -12,20 +12,21 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // disperse
-arma::mat disperse(arma::mat S, arma::mat N);
-RcppExport SEXP _stranger_disperse(SEXP SSEXP, SEXP NSEXP) {
+arma::mat disperse(arma::mat S, arma::mat N, bool rand);
+RcppExport SEXP _stranger_disperse(SEXP SSEXP, SEXP NSEXP, SEXP randSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type N(NSEXP);
-    rcpp_result_gen = Rcpp::wrap(disperse(S, N));
+    Rcpp::traits::input_parameter< bool >::type rand(randSEXP);
+    rcpp_result_gen = Rcpp::wrap(disperse(S, N, rand));
     return rcpp_result_gen;
 END_RCPP
 }
 // transition
-arma::cube transition(arma::cube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma);
-RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP) {
+arma::cube transition(arma::cube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, bool rand);
+RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP randSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,14 +35,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type gamma(gammaSEXP);
-    rcpp_result_gen = Rcpp::wrap(transition(N, E, alpha, beta, gamma));
+    Rcpp::traits::input_parameter< bool >::type rand(randSEXP);
+    rcpp_result_gen = Rcpp::wrap(transition(N, E, alpha, beta, gamma, rand));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 2},
-    {"_stranger_transition", (DL_FUNC) &_stranger_transition, 5},
+    {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 3},
+    {"_stranger_transition", (DL_FUNC) &_stranger_transition, 6},
     {NULL, NULL, 0}
 };
 
