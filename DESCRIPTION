@@ -17,5 +17,9 @@ Imports:
     rlang,
     stats,
     utils
+Suggests:
+    ggplot2,
+    dplyr,
+    tidyr
 URL: https://github.com/matthewkling/stranger
 BugReports: https://github.com/matthewkling/stranger/issues

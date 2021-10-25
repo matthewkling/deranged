@@ -85,44 +85,17 @@ sp$kernel$S <- 2
 
 #### Simulation
 
-Using these landscape and species inputs, we can now `simulate` range dynamics over time. At each time step, the species goes through a demographic transition and dispersal occurs.
+Using these landscape and species inputs, we can now `simulate` range dynamics over time. At each time step, the species goes through a demographic transition, and then dispersal occurs. The function returns an array of populations over space and time.
 
 ```{r simulation, echo = T, results = 'hide'}
 d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)
 ```
-The result is an array of adult populations over space and time. The first plot below shows population time series for 10 random grid cells, with populations in many cells leveling off due to density dependence. The second plot shows snapshots of spatial population patterns over time, with an east-west gradient in population size resulting from the spatial environmental gradient.
+We can quickly visualize the output using a couple plotting functions. The first plot below shows population time series for 10 random grid cells, with populations in many cells leveling off due to density dependence. The second plot shows snapshots of spatial population patterns over time, with an east-west gradient in population size resulting from the spatial environmental gradient.
 
-```{r timeseries, message = FALSE, warning = FALSE, echo = FALSE}
+```{r timeseries, message = FALSE, warning = FALSE}
 library(tidyverse)
-set.seed(1)
-
-f <- d %>% as.data.frame.table() %>%
-  setNames(c("y", "x", "t", "N")) %>%
-  mutate_all(as.integer) %>% ungroup()
-
-p1 <- f %>% 
-  filter(between(x, 5, max(x) - 4),
-         between(y, 5, max(y) - 4)) %>%
-  mutate(cell = paste(x, y)) %>%
-  filter(cell %in% sample(unique(cell), 10)) %>%
-  ggplot(aes(t, N, color = cell)) + 
-  geom_line() + 
-  theme_minimal() +
-  theme(legend.position = "none") +
-  labs(x = "time step", y = "N adults in cell")
-print(p1)
-
-p2 <- f %>% filter(t %in% seq(20, 200, 20)) %>%
-  mutate(N = ifelse(N == 0, NA, N)) %>%
-  ggplot(aes(x, y, fill = N)) + 
-  facet_wrap(~ t, nrow = 2, labeller = label_both) +
-  geom_raster() + 
-  theme_void() +
-  theme(legend.position = "bottom") +
-  coord_fixed() +
-  scale_fill_gradientn(colors = c("khaki", "orange", "darkred", "black")) +
-  labs(fill = "N adults")
-print(p2)
+d %>% plot_lines() %>% print()
+d %>% plot_heatmaps() %>% print()
 ```

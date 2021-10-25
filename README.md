@@ -104,7 +104,8 @@ sp$kernel$S <- 2
 
 Using these landscape and species inputs, we can now `simulate` range
 dynamics over time. At each time step, the species goes through a
-demographic transition and dispersal occurs.
+demographic transition, and then dispersal occurs. The function returns
+an array of populations over space and time.
 
 ``` r
 d <- simulate(sp, ls, # data and parameter inputs from above
@@ -112,11 +113,22 @@ d <- simulate(sp, ls, # data and parameter inputs from above
               record = 3) # record populations for life stage 3 (adults)
 ```
 
-The result is an array of adult populations over space and time. The
-first plot below shows population time series for 10 random grid cells,
-with populations in many cells leveling off due to density dependence.
-The second plot shows snapshots of spatial population patterns over
-time, with an east-west gradient in population size resulting from the
-spatial environmental gradient.
+We can quickly visualize the output using a couple plotting functions.
+The first plot below shows population time series for 10 random grid
+cells, with populations in many cells leveling off due to density
+dependence. The second plot shows snapshots of spatial population
+patterns over time, with an east-west gradient in population size
+resulting from the spatial environmental gradient.
 
-<img src="man/figures/README-timeseries-1.png" width="100%" /><img src="man/figures/README-timeseries-2.png" width="100%" />
+``` r
+library(tidyverse)
+d %>% plot_lines() %>% print()
+```
+
+<img src="man/figures/README-timeseries-1.png" width="100%" />
+
+``` r
+d %>% plot_heatmaps() %>% print()
+```
+
+<img src="man/figures/README-timeseries-2.png" width="100%" />
