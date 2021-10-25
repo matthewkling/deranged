@@ -112,17 +112,18 @@ simulate <- function(sp,
 
   n <- as.array(ls$n)
 
-  d <- array(NA, c(dim(n)[1:2], n_steps),
+  d <- array(NA, c(dim(n)[1:2], n_steps + 1),
              dimnames = list(1:dim(n)[1],
                              1:dim(n)[2],
-                             1:n_steps))
+                             0:n_steps))
+  d[ , , 1] <- n[ , , record]
 
   e <- as.array(ls$e)
   if(dim(e)[3] == n_steps){ ei <- 1:n_steps}else{ei <- rep(1L, n_steps)}
 
   pb <- txtProgressBar(min = 0, max = n_steps, initial = 0, style = 3)
   for(i in 1:n_steps){
-    d[ , , i] <- n[ , , record]
+    d[ , , i + 1] <- n[ , , record]
     n <- transition(n,
                     E = array(e[, , ei[i], ], dim(e)[c(1, 2, 4)]),
                     alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma,
