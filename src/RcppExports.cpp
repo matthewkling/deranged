@@ -12,16 +12,17 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // disperse
-arma::mat disperse(arma::mat S, arma::mat N, bool rand, int seed);
-RcppExport SEXP _stranger_disperse(SEXP SSEXP, SEXP NSEXP, SEXP randSEXP, SEXP seedSEXP) {
+arma::mat disperse(arma::mat S, arma::mat N, bool reflect, bool rand, int seed);
+RcppExport SEXP _stranger_disperse(SEXP SSEXP, SEXP NSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type S(SSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type N(NSEXP);
+    Rcpp::traits::input_parameter< bool >::type reflect(reflectSEXP);
     Rcpp::traits::input_parameter< bool >::type rand(randSEXP);
     Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(disperse(S, N, rand, seed));
+    rcpp_result_gen = Rcpp::wrap(disperse(S, N, reflect, rand, seed));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -56,7 +57,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 4},
+    {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 5},
     {"_stranger_transition", (DL_FUNC) &_stranger_transition, 7},
     {"_stranger_reproduce", (DL_FUNC) &_stranger_reproduce, 2},
     {NULL, NULL, 0}

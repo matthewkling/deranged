@@ -96,8 +96,9 @@ neighborhood <- function(diameter, kernel){
 #' @param ls Landscape spatial data list, following \code{landscape_template()}.
 #' @param diameter Neighborhood size (integer).
 #' @param n_steps Number of time steps to simulate (integer).
-#' @param record Index of age class to record and return (integer).
 #' @param randomize Should demography and dispersal be randomized (logical)?
+#' @param reflect Should dispersers bounce off domain boundary (logical)?
+#' @param record Index of age class to record and return (integer).
 #' @return An array of population values over space and time, for the class specified in \code{record}.
 #' @export
 #' @importFrom utils setTxtProgressBar txtProgressBar
@@ -105,8 +106,9 @@ simulate <- function(sp,
                      ls,
                      diameter = 7,
                      n_steps = 100,
-                     record = 3,
-                     randomize = TRUE){
+                     randomize = TRUE,
+                     reflect = TRUE,
+                     record = 3){
 
   neighbors <- neighborhood(diameter, sp$kernel)
 
@@ -130,7 +132,9 @@ simulate <- function(sp,
                     rand = randomize,
                     seed = sample(1e8, 1))
     n[, , 1] <- n[, , 1] + disperse(reproduce(n, f = sp$fecundity),
-                                    neighbors, rand = randomize,
+                                    neighbors,
+                                    reflect = reflect,
+                                    rand = randomize,
                                     seed = sample(1e8, 1))
     setTxtProgressBar(pb, i)
   }

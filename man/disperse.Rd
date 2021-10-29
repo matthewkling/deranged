@@ -4,14 +4,16 @@
 \alias{disperse}
 \title{Seed dispersal across a spatial grid}
 \usage{
-disperse(S, N, rand = TRUE, seed = 1L)
+disperse(S, N, reflect = TRUE, rand = TRUE, seed = 1L)
 }
 \arguments{
 \item{S}{A matrix of seed counts across a spatial grid.}
 
 \item{N}{A neighbor matrix, e.g. produced by \code{neighborhood()}.}
 
-\item{rand}{Randomize dispersal? (Boolean, default = TRUE).}
+\item{reflect}{Should dispersers exit the domain (\code{FALSE}) or bounce off the domain boundary (\code{TRUE}, default)?}
+
+\item{rand}{Randomize dispersal? (default = \code{TRUE})}
 
 \item{seed}{Integer to seed random number generator.}
 }

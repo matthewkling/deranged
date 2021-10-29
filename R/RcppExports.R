@@ -5,12 +5,13 @@
 #'
 #' @param S A matrix of seed counts across a spatial grid.
 #' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
-#' @param rand Randomize dispersal? (Boolean, default = TRUE).
+#' @param reflect Should dispersers exit the domain (\code{FALSE}) or bounce off the domain boundary (\code{TRUE}, default)?
+#' @param rand Randomize dispersal? (default = \code{TRUE})
 #' @param seed Integer to seed random number generator.
 #' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 #' @export
-disperse <- function(S, N, rand = TRUE, seed = 1L) {
-    .Call(`_stranger_disperse`, S, N, rand, seed)
+disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
+    .Call(`_stranger_disperse`, S, N, reflect, rand, seed)
 }
 
 #' Perform a randomized stage-based demographic transition

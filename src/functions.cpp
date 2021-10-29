@@ -64,18 +64,19 @@ arma::imat rmultinom_disp(int seeds, arma::mat probs, int seed) {
 
 
 
-
 //' Seed dispersal across a spatial grid
 //'
 //' @param S A matrix of seed counts across a spatial grid.
 //' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
-//' @param rand Randomize dispersal? (Boolean, default = TRUE).
+//' @param reflect Should dispersers exit the domain (\code{FALSE}) or bounce off the domain boundary (\code{TRUE}, default)?
+//' @param rand Randomize dispersal? (default = \code{TRUE})
 //' @param seed Integer to seed random number generator.
 //' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 //' @export
 // [[Rcpp::export]]
 arma::mat disperse(arma::mat S,
                    arma::mat N,
+                   bool reflect = true,
                    bool rand = true,
                    int seed = 1) {
 
@@ -98,8 +99,19 @@ arma::mat disperse(arma::mat S,
 
     }
   }
+
+  if (reflect) {
+    for(int i = 0; i < r; ++i){
+      T.row(r * 2 - 1 - i) = T.row(r * 2 - 1 - i) + T.row(i);
+      T.col(r * 2 - 1 - i) = T.col(r * 2 - 1 - i) + T.col(i);
+      T.row(T.n_rows - (r * 2 - 1 - i) - 1) = T.row(T.n_rows - (r * 2 - 1 - i) - 1) + T.row(T.n_rows - 1 - i);
+      T.col(T.n_cols - (r * 2 - 1 - i) - 1) = T.col(T.n_cols - (r * 2 - 1 - i) - 1) + T.col(T.n_cols - 1 - i);
+    }
+  }
+
   return T.submat(r, r, S.n_rows + r - 1, S.n_cols + r - 1);
 }
+
 
 
 //' Perform a randomized stage-based demographic transition
