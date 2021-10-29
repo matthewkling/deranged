@@ -68,10 +68,10 @@ function of population levels (density dependence) or environmental
 values (environmental dependence). A given transition probability is
 calculated as the intercept term from the `alpha` matrix, plus the
 coefficients from the `beta` array multiplied by population levels, plus
-coefficients from the `gamma` array multiplied by environmental values.
-In this example we’ll make juvenile survival depend on the environment,
-and we’ll make juvenile-adult transitions depend on the number of
-adults.
+the coefficients from the `gamma` array multiplied by environmental
+values. In this example we’ll make juvenile survival depend on the
+environment, and we’ll make juvenile-adult transitions depend on the
+number of adults.
 
 The other parameters control dispersal distances. Users can supply any
 arbitrary probability density function, but for now we’ll stick with the
@@ -82,18 +82,17 @@ parameter values.
 sp <- species_template(n_env = dim(ls$e)[4], names = stages)
 
 # invariant transitions
-sp$alpha["s", "j"] <- .01
-sp$alpha["a", "s"] <- .5
+sp$alpha["j", "s"] <- .01
 sp$alpha["a", "a"] <- .9
-sp$fecundity <- 200
+sp$fecundity["a"] <- 100
 
 # environmentally dependent juvenile survival
 sp$alpha["j", "j"] <- 0
 sp$gamma["j", "j", "v1"] <- 1
 
 # density dependent juvenile-adult transition
-sp$alpha["j", "a"] <- .1
-sp$beta["j", "a", "a"] <- -.001
+sp$alpha["a", "j"] <- .1
+sp$beta["a", "j", "a"] <- -.001
 
 # parameters for lognormal dispersal kernel
 sp$kernel$L <- .2

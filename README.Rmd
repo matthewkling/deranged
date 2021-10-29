@@ -56,7 +56,7 @@ ls$e[,,,] <- seq(0, 1, length.out = prod(dim(ls$e))) # set environmental values
 
 The other input to the simulation is a set of parameters representing the species' biology. This includes demographic parameters and dispersal parameters. Here we'll use `species_template` to create a parameter object, and then set some of the parameter values to fit our species. 
 
-For this matrix model, the demographic parameters represent probabilities of transitioning from one stage to another at each time step; these probabilities can be constant, or they can vary as a function of population levels (density dependence) or environmental values (environmental dependence). A given transition probability is calculated as the intercept term from the `alpha` matrix, plus the coefficients from the `beta` array multiplied by population levels, plus coefficients from the `gamma` array multiplied by environmental values. In this example we'll make juvenile survival depend on the environment, and we'll make juvenile-adult transitions depend on the number of adults.
+For this matrix model, the demographic parameters represent probabilities of transitioning from one stage to another at each time step; these probabilities can be constant, or they can vary as a function of population levels (density dependence) or environmental values (environmental dependence). A given transition probability is calculated as the intercept term from the `alpha` matrix, plus the coefficients from the `beta` array multiplied by population levels, plus the coefficients from the `gamma` array multiplied by environmental values. In this example we'll make juvenile survival depend on the environment, and we'll make juvenile-adult transitions depend on the number of adults.
 
 The other parameters control dispersal distances. Users can supply any arbitrary probability density function, but for now we'll stick with the lognormal distribution included in the template and just modify its parameter values.
 
@@ -64,18 +64,17 @@ The other parameters control dispersal distances. Users can supply any arbitrary
 sp <- species_template(n_env = dim(ls$e)[4], names = stages)
 
 # invariant transitions
-sp$alpha["s", "j"] <- .01
-sp$alpha["a", "s"] <- .5
+sp$alpha["j", "s"] <- .01
 sp$alpha["a", "a"] <- .9
-sp$fecundity <- 200
+sp$fecundity["a"] <- 100
 
 # environmentally dependent juvenile survival
 sp$alpha["j", "j"] <- 0
 sp$gamma["j", "j", "v1"] <- 1
 
 # density dependent juvenile-adult transition
-sp$alpha["j", "a"] <- .1
-sp$beta["j", "a", "a"] <- -.001
+sp$alpha["a", "j"] <- .1
+sp$beta["a", "j", "a"] <- -.001
 
 # parameters for lognormal dispersal kernel
 sp$kernel$L <- .2
