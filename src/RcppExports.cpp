@@ -26,27 +26,39 @@ BEGIN_RCPP
 END_RCPP
 }
 // transition
-arma::cube transition(arma::cube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, double fecundity, bool rand, int seed);
-RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP fecunditySEXP, SEXP randSEXP, SEXP seedSEXP) {
+arma::cube transition(arma::icube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, bool rand, int seed);
+RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP randSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::icube >::type N(NSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type E(ESEXP);
     Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< double >::type fecundity(fecunditySEXP);
     Rcpp::traits::input_parameter< bool >::type rand(randSEXP);
     Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(transition(N, E, alpha, beta, gamma, fecundity, rand, seed));
+    rcpp_result_gen = Rcpp::wrap(transition(N, E, alpha, beta, gamma, rand, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// reproduce
+arma::imat reproduce(arma::icube N, arma::ivec f);
+RcppExport SEXP _stranger_reproduce(SEXP NSEXP, SEXP fSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::icube >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::ivec >::type f(fSEXP);
+    rcpp_result_gen = Rcpp::wrap(reproduce(N, f));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 4},
-    {"_stranger_transition", (DL_FUNC) &_stranger_transition, 8},
+    {"_stranger_transition", (DL_FUNC) &_stranger_transition, 7},
+    {"_stranger_reproduce", (DL_FUNC) &_stranger_reproduce, 2},
     {NULL, NULL, 0}
 };
 

@@ -17,15 +17,24 @@ disperse <- function(S, N, rand = TRUE, seed = 1L) {
 #'
 #' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
 #' @param E A 4-D array of environmental data (x, y, time, variable).
-#' @param alpha A matrix of transition intercepts (from, to).
-#' @param beta A 3-D array of density dependence effects (from, to, modifier).
-#' @param gamma A 3-D array of environmental effects (from, to, variable).
-#' @param fecundity Multiplier applied to first life stage after transition.
+#' @param alpha A matrix of transition intercepts (to, from).
+#' @param beta A 3-D array of density dependence effects (to, from, modifier).
+#' @param gamma A 3-D array of environmental effects (to, from, variable).
 #' @param rand Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).
 #' @param seed Integer to seed random number generator.
 #' @return A 3-D array of population numbers for each life stage.
 #' @export
-transition <- function(N, E, alpha, beta, gamma, fecundity = 1, rand = TRUE, seed = 1L) {
-    .Call(`_stranger_transition`, N, E, alpha, beta, gamma, fecundity, rand, seed)
+transition <- function(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L) {
+    .Call(`_stranger_transition`, N, E, alpha, beta, gamma, rand, seed)
+}
+
+#' Reproduction across a spatial grid
+#'
+#' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
+#' @param f Integer vector of fecundity with a value for each class in \code{N}.
+#' @return A matrix.
+#' @export
+reproduce <- function(N, f) {
+    .Call(`_stranger_reproduce`, N, f)
 }
 

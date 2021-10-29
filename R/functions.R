@@ -15,7 +15,7 @@ species_template <- function(n_env = 1,
                     dimnames = list(names, names, names)),
        gamma = array(0, c(3, 3, n_env),
                      dimnames = list(names, names, paste0("v", 1:n_env))),
-       fecundity = 1,
+       fecundity = setNames(rep(0, length(names)), names),
        kernel = list(fun = dlognormal,
                      params = list(L = 1, S = 1)))
 }
@@ -127,11 +127,11 @@ simulate <- function(sp,
     n <- transition(n,
                     E = array(e[, , ei[i], ], dim(e)[c(1, 2, 4)]),
                     alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma,
-                    fecundity = sp$fecundity,
                     rand = randomize,
                     seed = sample(1e8, 1))
-    n[, , 1] <- disperse(n[, , 1], neighbors, rand = randomize,
-                         seed = sample(1e8, 1))
+    n[, , 1] <- n[, , 1] + disperse(reproduce(n, f = sp$fecundity),
+                                    neighbors, rand = randomize,
+                                    seed = sample(1e8, 1))
     setTxtProgressBar(pb, i)
   }
 

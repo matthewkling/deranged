@@ -4,20 +4,18 @@
 \alias{transition}
 \title{Perform a randomized stage-based demographic transition}
 \usage{
-transition(N, E, alpha, beta, gamma, fecundity = 1, rand = TRUE, seed = 1L)
+transition(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L)
 }
 \arguments{
 \item{N}{A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).}
 
 \item{E}{A 4-D array of environmental data (x, y, time, variable).}
 
-\item{alpha}{A matrix of transition intercepts (from, to).}
+\item{alpha}{A matrix of transition intercepts (to, from).}
 
-\item{beta}{A 3-D array of density dependence effects (from, to, modifier).}
+\item{beta}{A 3-D array of density dependence effects (to, from, modifier).}
 
-\item{gamma}{A 3-D array of environmental effects (from, to, variable).}
-
-\item{fecundity}{Multiplier applied to first life stage after transition.}
+\item{gamma}{A 3-D array of environmental effects (to, from, variable).}
 
 \item{rand}{Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).}
 
