@@ -44,13 +44,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // reproduce
-arma::imat reproduce(arma::icube N, arma::ivec f);
+arma::mat reproduce(arma::cube N, arma::vec f);
 RcppExport SEXP _stranger_reproduce(SEXP NSEXP, SEXP fSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::icube >::type N(NSEXP);
-    Rcpp::traits::input_parameter< arma::ivec >::type f(fSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type f(fSEXP);
     rcpp_result_gen = Rcpp::wrap(reproduce(N, f));
     return rcpp_result_gen;
 END_RCPP

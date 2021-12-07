@@ -206,9 +206,9 @@ arma::cube transition(arma::cube N,
 //' @return A matrix.
 //' @export
 // [[Rcpp::export]]
-arma::imat reproduce(arma::icube N,
-                     arma::ivec f) {
-  arma::imat y(N.n_rows, N.n_cols, arma::fill::zeros);
+arma::mat reproduce(arma::cube N,
+                     arma::vec f) {
+  arma::mat y(N.n_rows, N.n_cols, arma::fill::zeros);
 
   for(arma::uword i = 0; i < N.n_slices; ++i){
     if (f(i) == 0) {
