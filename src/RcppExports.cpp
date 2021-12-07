@@ -27,12 +27,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // transition
-arma::cube transition(arma::icube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, bool rand, int seed);
+arma::cube transition(arma::cube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, bool rand, int seed);
 RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP randSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::icube >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type N(NSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type E(ESEXP);
     Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type beta(betaSEXP);

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{transition}
 \alias{transition}
-\title{Perform a randomized stage-based demographic transition}
+\title{Perform a stage-based demographic transition}
 \usage{
 transition(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L)
 }
@@ -25,5 +25,5 @@ transition(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L)
 A 3-D array of population numbers for each life stage.
 }
 \description{
-Perform a randomized stage-based demographic transition
+Perform a stage-based demographic transition
 }

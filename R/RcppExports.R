@@ -14,7 +14,7 @@ disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
     .Call(`_stranger_disperse`, S, N, reflect, rand, seed)
 }
 
-#' Perform a randomized stage-based demographic transition
+#' Perform a stage-based demographic transition
 #'
 #' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
 #' @param E A 4-D array of environmental data (x, y, time, variable).

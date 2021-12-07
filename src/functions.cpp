@@ -14,13 +14,13 @@ arma::imat rbinom_trans(arma::imat n,
   return y;
 }
 
-arma::icube rmultinom_trans(arma::imat pop, arma::cube probs, int seed) {
+arma::icube rmultinom_trans(arma::mat pop, arma::cube probs, int seed) {
 
+  arma::imat popn = arma::conv_to<arma::imat>::from(pop);
   arma::icube y(size(probs), arma::fill::zeros);
-
   arma::mat p(size(pop), arma::fill::zeros);
   arma::mat m = 1 - sum(probs, 2); // mortality
-  arma::imat u = pop; // unallocated
+  arma::imat u = popn; // unallocated
 
   for(arma::uword i = 0; i < probs.n_slices; ++i) {
     p = sum(probs.slices(i, probs.n_slices - 1), 2);
@@ -114,7 +114,7 @@ arma::mat disperse(arma::mat S,
 
 
 
-//' Perform a randomized stage-based demographic transition
+//' Perform a stage-based demographic transition
 //'
 //' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
 //' @param E A 4-D array of environmental data (x, y, time, variable).
@@ -126,7 +126,7 @@ arma::mat disperse(arma::mat S,
 //' @return A 3-D array of population numbers for each life stage.
 //' @export
 // [[Rcpp::export]]
-arma::cube transition(arma::icube N,
+arma::cube transition(arma::cube N,
                       arma::cube E,
                       arma::mat alpha,
                       arma::cube beta,
