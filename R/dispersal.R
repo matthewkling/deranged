@@ -7,38 +7,60 @@ dexponential <- function(x, L) dexp(x, rate = L) / (2*pi*x)
 
 
 
-#' Construct a neighborhood dispersal probability matrix.
+#' Neighborhood dispersal probability matrix.
+#'
+#' This function uses numerical integration of a dispersal kernel to construct
+#' a matrix representing the probability that dispersal originating in a given
+#' grid cell will arrive at each cell across its neighborhood.
 #'
 #' @param diameter Neighborhood size, in grid cells (odd integer).
 #' @param kernel A dispersal kernel list, e.g. \code{species_template()$kernel}.
-#' @param factor Factor by which to increase grid resolution for numerical integration (odd integer).
+#' @param origin Either "uniform" (default) or "centroid".
+#' @param res Resolution for numerical integration (odd integer).
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
 #' @importFrom rlang invoke
-neighborhood <- function(diameter, kernel, factor = 51){
+neighborhood <- function(diameter, kernel, origin = "uniform", res = 11){
 
-  # internal functions
-  disagg <- function(x, factor) as.matrix(disaggregate(raster(x), factor))
-  agg <- function(x, factor) as.matrix(aggregate(raster(x), factor,
-                                                 sum, na.rm = T))
+  disagg <- function(x, res) as.matrix(disaggregate(raster(x), res))
+
+  agg <- function(x, res) as.matrix(aggregate(raster(x), res, sum, na.rm = T))
+
   kdf <- function(x){
     kernel$params$x <- x
     invoke(kernel$fun, kernel$params)
   }
 
-  # high-res distance surface
-  md <- disagg(matrix(NA, diameter, diameter), factor)
-  radius <- (diameter * factor - 1) / 2
-  dists <- expand.grid(x = -radius:radius, y = -radius:radius)
-  dists <- sqrt(dists$x^2 + dists$y^2) / factor
-  dists <- matrix(dists, diameter * factor, diameter * factor)
-  dists[dists > radius / factor] <- Inf
+  md <- disagg(matrix(NA, diameter, diameter), res)
+  radius <- (diameter * res - 1) / 2
+  r <- (res - 1) / 2
 
-  # proportion of propagules falling across neighborhood
-  p <- kdf(dists)
-  p <- agg(p, factor)
+  if(origin == "centroid"){
+    dists <- expand_grid(x = -radius:radius,
+                         y = -radius:radius) %>%
+      mutate(d = sqrt(x^2 + y^2) / res,
+             d = ifelse(d > (radius / res), Inf, d),
+             p = kdf(d))
+  }
+
+  if(origin == "uniform"){
+    dists <- expand_grid(x = -radius:radius,
+                         y = -radius:radius,
+                         xo = -r:r,
+                         yo = -r:r) %>%
+      mutate(cd = sqrt(x^2 + y^2) / res,
+             d = sqrt((x-xo)^2 + (y-yo)^2) / res,
+             d = ifelse(cd > (radius / res), Inf, d),
+             p = kdf(d)) %>%
+      group_by(x, y) %>%
+      summarize(p = mean(p, na.rm = T)) %>%
+      ungroup()
+  }
+
+  p <- dists$p %>%
+    matrix(diameter * res, diameter * res) %>%
+    agg(res)
   p <- p / sum(p)
-
   return(p)
 }

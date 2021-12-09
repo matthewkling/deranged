@@ -2,20 +2,24 @@
 % Please edit documentation in R/dispersal.R
 \name{neighborhood}
 \alias{neighborhood}
-\title{Construct a neighborhood dispersal probability matrix.}
+\title{Neighborhood dispersal probability matrix.}
 \usage{
-neighborhood(diameter, kernel, factor = 51)
+neighborhood(diameter, kernel, origin = "uniform", res = 11)
 }
 \arguments{
 \item{diameter}{Neighborhood size, in grid cells (odd integer).}
 
 \item{kernel}{A dispersal kernel list, e.g. \code{species_template()$kernel}.}
 
-\item{factor}{Factor by which to increase grid resolution for numerical integration (odd integer).}
+\item{origin}{Either "uniform" (default) or "centroid".}
+
+\item{res}{Resolution for numerical integration (odd integer).}
 }
 \value{
 A matrix of dispersal probabilities.
 }
 \description{
-Construct a neighborhood dispersal probability matrix.
+This function uses numerical integration of a dispersal kernel to construct
+a matrix representing the probability that dispersal originating in a given
+grid cell will arrive at each cell across its neighborhood.
 }
