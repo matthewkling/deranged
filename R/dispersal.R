@@ -9,36 +9,36 @@ dexponential <- function(x, L) dexp(x, rate = L) / (2*pi*x)
 
 #' Construct a neighborhood dispersal probability matrix.
 #'
-#' @param diameter Neighborhood size, in grid cells (integer).
+#' @param diameter Neighborhood size, in grid cells (odd integer).
 #' @param kernel A dispersal kernel list, e.g. \code{species_template()$kernel}.
+#' @param factor Factor by which to increase grid resolution for numerical integration (odd integer).
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
 #' @importFrom rlang invoke
-neighborhood <- function(diameter, kernel){
+neighborhood <- function(diameter, kernel, factor = 51){
 
-  # neighbor distances (units = original grid cells)
-  if(diameter %% 2 != 1) stop("diameter must be an odd integer")
-  radius <- (diameter - 1) / 2
-  dists <- expand.grid(x = -radius:radius, y = -radius:radius)
-  dists <- sqrt(dists$x^2 + dists$y^2)
-  dists <- matrix(dists, diameter, diameter)
-  dists[dists > radius] <- Inf
-
-  # proportion of propagules falling across neighborhood
+  # internal functions
+  disagg <- function(x, factor) as.matrix(disaggregate(raster(x), factor))
+  agg <- function(x, factor) as.matrix(aggregate(raster(x), factor,
+                                                 sum, na.rm = T))
   kdf <- function(x){
     kernel$params$x <- x
     invoke(kernel$fun, kernel$params)
   }
-  kd <- function(x){
-    d <- kdf(x)
-    p <- integrate(function(x) kdf(x)*2*pi*x,
-                   0, .5)$value # fraction of propagules not leaving cell
-    r <- (nrow(x) + 1)/2
-    d[r, r] <- 0
-    d <- d / sum(d) * (1 - p)
-    d[r, r] <- p
-    return(d)
-  }
-  kd(dists)
+
+  # high-res distance surface
+  md <- disagg(matrix(NA, diameter, diameter), factor)
+  radius <- (diameter * factor - 1) / 2
+  dists <- expand.grid(x = -radius:radius, y = -radius:radius)
+  dists <- sqrt(dists$x^2 + dists$y^2) / factor
+  dists <- matrix(dists, diameter * factor, diameter * factor)
+  dists[dists > radius / factor] <- Inf
+
+  # proportion of propagules falling across neighborhood
+  p <- kdf(dists)
+  p <- agg(p, factor)
+  p <- p / sum(p)
+
+  return(p)
 }

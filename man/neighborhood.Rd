@@ -4,12 +4,14 @@
 \alias{neighborhood}
 \title{Construct a neighborhood dispersal probability matrix.}
 \usage{
-neighborhood(diameter, kernel)
+neighborhood(diameter, kernel, factor = 51)
 }
 \arguments{
-\item{diameter}{Neighborhood size, in grid cells (integer).}
+\item{diameter}{Neighborhood size, in grid cells (odd integer).}
 
 \item{kernel}{A dispersal kernel list, e.g. \code{species_template()$kernel}.}
+
+\item{factor}{Factor by which to increase grid resolution for numerical integration (odd integer).}
 }
 \value{
 A matrix of dispersal probabilities.
