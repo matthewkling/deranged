@@ -80,7 +80,9 @@ neighborhood <- function(kernel, diameter = 7, origin = "uniform", res = 11){
     dists$p <- dists$x
   }
 
-  p <- agg(matrix(dists$p, diameter * res, diameter * res), res, sum, na.rm = T)
+  p <- agg(matrix(dists$p, diameter * res, diameter * res),
+           res,
+           sum, na.rm = T)
   p <- p / sum(p)
   return(p)
 }
