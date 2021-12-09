@@ -2,24 +2,22 @@
 % Please edit documentation in R/functions.R
 \name{simulate}
 \alias{simulate}
-\title{Run a multi-year range simulation}
+\title{Run a range simulation}
 \usage{
 simulate(
   sp,
   ls,
-  diameter = 7,
   n_steps = 100,
   randomize = TRUE,
   reflect = TRUE,
-  record = 3
+  record = 3,
+  ...
 )
 }
 \arguments{
 \item{sp}{Species parameter list, following \code{species_template()}.}
 
 \item{ls}{Landscape spatial data list, following \code{landscape_template()}.}
-
-\item{diameter}{Neighborhood size (integer).}
 
 \item{n_steps}{Number of time steps to simulate (integer).}
 
@@ -28,10 +26,12 @@ simulate(
 \item{reflect}{Should dispersers bounce off domain boundary (logical)?}
 
 \item{record}{Index of age class to record and return (integer).}
+
+\item{...}{Further arguments passed to \code{neighborhood()}.}
 }
 \value{
 An array of population values over space and time, for the class specified in \code{record}.
 }
 \description{
-Run a multi-year range simulation
+Run a range simulation
 }

@@ -7,38 +7,80 @@ dexponential <- function(x, L) dexp(x, rate = L) / (2*pi*x)
 
 
 
-#' Construct a neighborhood dispersal probability matrix.
+# functions to aggregate and disaggregate matrices, for internal use
+disagg <- function(x, res){
+  y <- matrix(NA, nrow(x) * res, ncol(x) * res)
+  xi <- rep(1:nrow(x), each = res)
+  xj <- rep(1:ncol(x), each = res)
+  for(i in 1:nrow(y)){
+    for(j in 1:ncol(y)){
+      y[i,j] <- x[xi[i], xj[j]]
+    }
+  }
+  return(y)
+}
+agg <- function(x, res, fun = sum, ...){
+  y <- matrix(NA, nrow(x) / res, ncol(x) / res)
+  yi <- rep(1:nrow(y), each = res)
+  yj <- rep(1:ncol(y), each = res)
+  for(i in 1:nrow(y)){
+    for(j in 1:ncol(y)){
+      y[i,j] <- fun(x[which(yi == i), which(yj == j)], ...)
+    }
+  }
+  return(y)
+}
+
+
+#' Neighborhood dispersal probability matrix.
 #'
-#' @param diameter Neighborhood size, in grid cells (odd integer).
+#' This function uses numerical integration of a dispersal kernel to construct
+#' a matrix representing the probability that dispersal originating in a given
+#' grid cell will arrive at each cell across its neighborhood.
+#'
 #' @param kernel A dispersal kernel list, e.g. \code{species_template()$kernel}.
-#' @param factor Factor by which to increase grid resolution for numerical integration (odd integer).
+#' @param diameter Neighborhood size, in grid cells (odd integer).
+#' @param origin Either "uniform" (default) or "centroid".
+#' @param res Resolution for numerical integration (odd integer).
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
 #' @importFrom rlang invoke
-neighborhood <- function(diameter, kernel, factor = 51){
+neighborhood <- function(kernel, diameter = 7, origin = "uniform", res = 11){
 
-  # internal functions
-  disagg <- function(x, factor) as.matrix(disaggregate(raster(x), factor))
-  agg <- function(x, factor) as.matrix(aggregate(raster(x), factor,
-                                                 sum, na.rm = T))
   kdf <- function(x){
     kernel$params$x <- x
     invoke(kernel$fun, kernel$params)
   }
 
-  # high-res distance surface
-  md <- disagg(matrix(NA, diameter, diameter), factor)
-  radius <- (diameter * factor - 1) / 2
-  dists <- expand.grid(x = -radius:radius, y = -radius:radius)
-  dists <- sqrt(dists$x^2 + dists$y^2) / factor
-  dists <- matrix(dists, diameter * factor, diameter * factor)
-  dists[dists > radius / factor] <- Inf
+  md <- disagg(matrix(NA, diameter, diameter), res)
+  radius <- (diameter * res - 1) / 2
+  r <- (res - 1) / 2
 
-  # proportion of propagules falling across neighborhood
-  p <- kdf(dists)
-  p <- agg(p, factor)
+  if(origin == "centroid"){
+    dists <- expand.grid(x = -radius:radius,
+                         y = -radius:radius)
+    dists$d <- sqrt(dists$x^2 + dists$y^2) / res
+    dists$d <- ifelse(dists$d > (radius / res), Inf, dists$d)
+    dists$p <- kdf(dists$d)
+  }
+
+  if(origin == "uniform"){
+    dists <- expand.grid(x = -radius:radius,
+                         y = -radius:radius,
+                         xo = -r:r,
+                         yo = -r:r)
+    dists$cd <- sqrt(dists$x^2 + dists$y^2) / res
+    dists$d <- sqrt((dists$x - dists$xo)^2 + (dists$y - dists$yo)^2) / res
+    dists$d <- ifelse(dists$cd > (radius / res), Inf, dists$d)
+    dists$p <- kdf(dists$d)
+
+    dists <- aggregate(dists$p, by = list(xx = dists$x, yy = dists$y),
+                       FUN = mean, na.rm = T)
+    dists$p <- dists$x
+  }
+
+  p <- agg(matrix(dists$p, diameter * res, diameter * res), res, sum, na.rm = T)
   p <- p / sum(p)
-
   return(p)
 }

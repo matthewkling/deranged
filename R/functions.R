@@ -50,27 +50,27 @@ landscape_template <- function(n_row = 10, n_col = 10,
 
 
 
-#' Run a multi-year range simulation
+#' Run a range simulation
 #'
 #' @param sp Species parameter list, following \code{species_template()}.
 #' @param ls Landscape spatial data list, following \code{landscape_template()}.
-#' @param diameter Neighborhood size (integer).
 #' @param n_steps Number of time steps to simulate (integer).
 #' @param randomize Should demography and dispersal be randomized (logical)?
 #' @param reflect Should dispersers bounce off domain boundary (logical)?
 #' @param record Index of age class to record and return (integer).
+#' @param ... Further arguments passed to \code{neighborhood()}.
 #' @return An array of population values over space and time, for the class specified in \code{record}.
 #' @export
 #' @importFrom utils setTxtProgressBar txtProgressBar
 simulate <- function(sp,
                      ls,
-                     diameter = 7,
                      n_steps = 100,
                      randomize = TRUE,
                      reflect = TRUE,
-                     record = 3){
+                     record = 3,
+                     ...){
 
-  neighbors <- neighborhood(diameter, sp$kernel)
+  neighbors <- neighborhood(sp$kernel, ...)
 
   n <- as.array(ls$n)
 
