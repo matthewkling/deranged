@@ -8,7 +8,11 @@
 frame <- function(x){
   x %>% as.data.frame.table() %>% as_tibble() %>%
     setNames(c("y", "x", "t", "N")) %>%
-    mutate_all(as.integer) %>% ungroup() %>%
+    mutate(x = as.integer(x),
+           y = as.integer(y),
+           t = as.integer(t),
+           N = as.numeric(N)) %>%
+    ungroup() %>%
     mutate(t = t - 1)
 }
 
