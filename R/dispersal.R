@@ -7,18 +7,7 @@ dexponential <- function(x, L) dexp(x, rate = L) / (2*pi*x)
 
 
 
-# functions to aggregate and disaggregate matrices, for internal use
-disagg <- function(x, res){
-  y <- matrix(NA, nrow(x) * res, ncol(x) * res)
-  xi <- rep(1:nrow(x), each = res)
-  xj <- rep(1:ncol(x), each = res)
-  for(i in 1:nrow(y)){
-    for(j in 1:ncol(y)){
-      y[i,j] <- x[xi[i], xj[j]]
-    }
-  }
-  return(y)
-}
+# function to aggregate matrices, for internal use
 agg <- function(x, res, fun = sum, ...){
   y <- matrix(NA, nrow(x) / res, ncol(x) / res)
   yi <- rep(1:nrow(y), each = res)
@@ -40,49 +29,44 @@ agg <- function(x, res, fun = sum, ...){
 #'
 #' @param kernel A dispersal kernel list, e.g. \code{species_template()$kernel}.
 #' @param diameter Neighborhood size, in grid cells (odd integer).
-#' @param origin Either "uniform" (default) or "centroid".
+#' @param method Either "uniform" (default) or "mixed".
 #' @param res Resolution for numerical integration (odd integer).
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
 #' @importFrom rlang invoke
-neighborhood <- function(kernel, diameter = 7, origin = "uniform", res = 11){
+neighborhood <- function(kernel, diameter = 7, method = "uniform", res = 11){
 
   kdf <- function(x){
     kernel$params$x <- x
     invoke(kernel$fun, kernel$params)
   }
 
-  md <- disagg(matrix(NA, diameter, diameter), res)
+  # calculate distances and probabilities
   radius <- (diameter * res - 1) / 2
-  r <- (res - 1) / 2
+  r <- ifelse(method == "uniform", (res - 1) / 2, 0)
+  d <- expand.grid(x = -radius:radius,
+                   y = -radius:radius,
+                   xo = -r:r,
+                   yo = -r:r)
+  d$cd <- sqrt(d$x^2 + d$y^2) / res # dist from absolute center
+  d$d <- sqrt((d$x - d$xo)^2 + (d$y - d$yo)^2) / res # distance from origin
+  d$d <- ifelse(d$cd > (radius / res), Inf, d$d)
+  d$p <- kdf(d$d)
 
-  if(origin == "centroid"){
-    dists <- expand.grid(x = -radius:radius,
-                         y = -radius:radius)
-    dists$d <- sqrt(dists$x^2 + dists$y^2) / res
-    dists$d <- ifelse(dists$d > (radius / res), Inf, dists$d)
-    dists$p <- kdf(dists$d)
+  # aggregate across origins
+  if(method == "uniform"){
+    d <- aggregate(d$p, by = list(xx = d$x, yy = d$y),
+                   FUN = mean, na.rm = T)
+    d$p <- d$x
   }
 
-  if(origin == "uniform"){
-    dists <- expand.grid(x = -radius:radius,
-                         y = -radius:radius,
-                         xo = -r:r,
-                         yo = -r:r)
-    dists$cd <- sqrt(dists$x^2 + dists$y^2) / res
-    dists$d <- sqrt((dists$x - dists$xo)^2 + (dists$y - dists$yo)^2) / res
-    dists$d <- ifelse(dists$cd > (radius / res), Inf, dists$d)
-    dists$p <- kdf(dists$d)
-
-    dists <- aggregate(dists$p, by = list(xx = dists$x, yy = dists$y),
-                       FUN = mean, na.rm = T)
-    dists$p <- dists$x
-  }
-
-  p <- agg(matrix(dists$p, diameter * res, diameter * res),
+  # aggregate across destinations
+  p <- agg(matrix(d$p, diameter * res, diameter * res),
            res,
            sum, na.rm = T)
+
+  # normalize
   p <- p / sum(p)
   return(p)
 }

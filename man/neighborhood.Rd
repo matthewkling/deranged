@@ -4,14 +4,14 @@
 \alias{neighborhood}
 \title{Neighborhood dispersal probability matrix.}
 \usage{
-neighborhood(kernel, diameter = 7, origin = "uniform", res = 11)
+neighborhood(kernel, diameter = 7, method = "uniform", res = 11)
 }
 \arguments{
 \item{kernel}{A dispersal kernel list, e.g. \code{species_template()$kernel}.}
 
 \item{diameter}{Neighborhood size, in grid cells (odd integer).}
 
-\item{origin}{Either "uniform" (default) or "centroid".}
+\item{method}{Either "uniform" (default) or "mixed".}
 
 \item{res}{Resolution for numerical integration (odd integer).}
 }
