@@ -11,7 +11,7 @@ neighborhood(kernel, diameter = 7, method = "uniform", res = 11)
 
 \item{diameter}{Neighborhood size, in grid cells (odd integer).}
 
-\item{method}{Either "uniform" (default) or "mixed".}
+\item{method}{Either "uniform" (default), "mixed", or "centroid".}
 
 \item{res}{Resolution for numerical integration (odd integer).}
 }

@@ -29,7 +29,7 @@ agg <- function(x, res, fun = sum, ...){
 #'
 #' @param kernel A dispersal kernel list, e.g. \code{species_template()$kernel}.
 #' @param diameter Neighborhood size, in grid cells (odd integer).
-#' @param method Either "uniform" (default) or "mixed".
+#' @param method Either "uniform" (default), "mixed", or "centroid".
 #' @param res Resolution for numerical integration (odd integer).
 #' @return A matrix of dispersal probabilities.
 #' @export
@@ -43,8 +43,9 @@ neighborhood <- function(kernel, diameter = 7, method = "uniform", res = 11){
   }
 
   # calculate distances and probabilities
-  radius <- (diameter * res - 1) / 2
-  r <- ifelse(method == "uniform", (res - 1) / 2, 0)
+  if(method == "centroid") res <- 1
+  radius <- (diameter * res - 1) / 2 # radius of high-res grid
+  r <- ifelse(method == "uniform", (res - 1) / 2, 0) # radius of coarse cell
   d <- expand.grid(x = -radius:radius,
                    y = -radius:radius,
                    xo = -r:r,
