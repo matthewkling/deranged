@@ -10,8 +10,8 @@
 #' @param seed Integer to seed random number generator.
 #' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 #' @export
-disperse <- function(S, N, ind, reflect = TRUE, rand = TRUE, seed = 1L) {
-    .Call(`_stranger_disperse`, S, N, ind, reflect, rand, seed)
+disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
+    .Call(`_stranger_disperse`, S, N, reflect, rand, seed)
 }
 
 #' Perform a stage-based demographic transition
