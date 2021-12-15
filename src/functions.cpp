@@ -14,7 +14,9 @@ arma::imat rbinom_trans(arma::imat n,
   return y;
 }
 
-arma::icube rmultinom_trans(arma::mat pop, arma::cube probs, int seed) {
+arma::icube rmultinom_trans(arma::mat pop,
+                            arma::cube probs,
+                            int seed) {
 
   arma::imat popn = arma::conv_to<arma::imat>::from(pop);
   arma::icube y(size(probs), arma::fill::zeros);
@@ -35,28 +37,30 @@ arma::icube rmultinom_trans(arma::mat pop, arma::cube probs, int seed) {
 
 int rbinom_disp(int n,
                 double p,
-                int seed = 1) {
-  std::default_random_engine gen(seed);
+                std::default_random_engine gen) {
   std::binomial_distribution<> d(n, p);
   return d(gen);
 }
 
-arma::imat rmultinom_disp(int seeds, arma::mat probs, int seed) {
+arma::imat rmultinom_disp(int seeds,
+                          arma::mat probs,
+                          arma::ivec ind,
+                          std::default_random_engine gen) {
 
   arma::imat y(size(probs), arma::fill::zeros); // post-dispersal counts
   double p = 1; // unallocated probability
   int u = seeds; // unallocated seeds
+  int ii = 0;
 
   for(arma::uword i = 0; i < probs.n_elem; ++i) {
-    if (probs(i) == 0) {
-      continue;
-    }
-
+    ii = ind(i);
     p = accu(probs);
-    y(i) = std::min(rbinom_disp(u, probs(i) / p, seed), u);
-    u = u - y(i);
-    probs(i) = 0;
-    ++seed;
+    y(ii) = std::min(rbinom_disp(u, probs(ii) / p, gen), u);
+    u = u - y(ii);
+    if (u == 0) {
+      break;
+    }
+    probs(ii) = 0;
   }
 
   return(y);
@@ -64,7 +68,7 @@ arma::imat rmultinom_disp(int seeds, arma::mat probs, int seed) {
 
 
 
-//' Seed dispersal across a spatial grid
+//' Simulate dispersal across a spatial grid
 //'
 //' @param S A matrix of seed counts across a spatial grid.
 //' @param N A neighbor matrix, e.g. produced by \code{neighborhood()}.
@@ -76,9 +80,12 @@ arma::imat rmultinom_disp(int seeds, arma::mat probs, int seed) {
 // [[Rcpp::export]]
 arma::mat disperse(arma::mat S,
                    arma::mat N,
+                   arma::ivec ind,
                    bool reflect = true,
                    bool rand = true,
                    int seed = 1) {
+
+  std::default_random_engine gen(seed); // initialize random number generator
 
   int r = (N.n_rows - 1) / 2; // window radius
   arma::mat T(S.n_rows + r * 2, S.n_cols + r * 2, arma::fill::zeros); // padded grid
@@ -89,8 +96,7 @@ arma::mat disperse(arma::mat S,
       if (rand) {
         T.submat(a, b, a + r * 2, b + r * 2) =
           T.submat(a, b, a + r * 2, b + r * 2) +
-          rmultinom_disp(S(a, b), N, seed);
-        ++seed;
+          rmultinom_disp(S(a, b), N, ind, gen);
       } else {
         T.submat(a, b, a + r * 2, b + r * 2) =
           T.submat(a, b, a + r * 2, b + r * 2) +
@@ -104,8 +110,10 @@ arma::mat disperse(arma::mat S,
     for(int i = 0; i < r; ++i){
       T.row(r * 2 - 1 - i) = T.row(r * 2 - 1 - i) + T.row(i);
       T.col(r * 2 - 1 - i) = T.col(r * 2 - 1 - i) + T.col(i);
-      T.row(T.n_rows - (r * 2 - 1 - i) - 1) = T.row(T.n_rows - (r * 2 - 1 - i) - 1) + T.row(T.n_rows - 1 - i);
-      T.col(T.n_cols - (r * 2 - 1 - i) - 1) = T.col(T.n_cols - (r * 2 - 1 - i) - 1) + T.col(T.n_cols - 1 - i);
+      T.row(T.n_rows - (r * 2 - 1 - i) - 1) =
+        T.row(T.n_rows - (r * 2 - 1 - i) - 1) + T.row(T.n_rows - 1 - i);
+      T.col(T.n_cols - (r * 2 - 1 - i) - 1) =
+        T.col(T.n_cols - (r * 2 - 1 - i) - 1) + T.col(T.n_cols - 1 - i);
     }
   }
 

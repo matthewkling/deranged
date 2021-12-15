@@ -2,9 +2,9 @@
 % Please edit documentation in R/RcppExports.R
 \name{disperse}
 \alias{disperse}
-\title{Seed dispersal across a spatial grid}
+\title{Simulate dispersal across a spatial grid}
 \usage{
-disperse(S, N, reflect = TRUE, rand = TRUE, seed = 1L)
+disperse(S, N, ind, reflect = TRUE, rand = TRUE, seed = 1L)
 }
 \arguments{
 \item{S}{A matrix of seed counts across a spatial grid.}
@@ -21,5 +21,5 @@ disperse(S, N, reflect = TRUE, rand = TRUE, seed = 1L)
 A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 }
 \description{
-Seed dispersal across a spatial grid
+Simulate dispersal across a spatial grid
 }
