@@ -4,8 +4,7 @@ using namespace Rcpp;
 
 arma::imat rbinom_trans(arma::imat n,
                         arma::mat p,
-                        int seed = 1) {
-  std::default_random_engine gen(seed);
+                        std::default_random_engine gen) {
   arma::imat y(n.n_rows, n.n_cols);
   for(arma::uword i = 0; i < n.n_elem; ++i) {
     std::binomial_distribution<> d(n(i), p(i));
@@ -17,7 +16,7 @@ arma::imat rbinom_trans(arma::imat n,
 
 arma::icube rmultinom_trans(arma::mat pop,
                             arma::cube probs,
-                            int seed) {
+                            std::default_random_engine gen) {
 
   arma::imat popn = arma::conv_to<arma::imat>::from(pop);
   arma::icube y(size(probs), arma::fill::zeros);
@@ -27,9 +26,8 @@ arma::icube rmultinom_trans(arma::mat pop,
 
   for(arma::uword i = 0; i < probs.n_slices; ++i) {
     p = sum(probs.slices(i, probs.n_slices - 1), 2);
-    y.slice(i) = arma::min(rbinom_trans(u, probs.slice(i) / (p + m), seed), u);
+    y.slice(i) = arma::min(rbinom_trans(u, probs.slice(i) / (p + m), gen), u);
     u = u - y.slice(i);
-    ++seed;
   }
 
   return(y);
@@ -60,6 +58,8 @@ arma::cube transition(arma::cube N,
   arma::cube NN(size(N), arma::fill::zeros);
   arma::cube p(size(N), arma::fill::zeros);
   double m = 0;
+
+  std::default_random_engine gen(seed); // initialize random number generator
 
   for(arma::uword s = 0; s < alpha.n_cols; ++s) { // source class
 
@@ -108,7 +108,7 @@ arma::cube transition(arma::cube N,
 
     // perform class transition
     if (rand) {
-      NN = NN + rmultinom_trans(N.slice(s), p, seed);
+      NN = NN + rmultinom_trans(N.slice(s), p, gen);
       ++seed;
     } else {
       for(arma::uword t = 0; t < alpha.n_rows; ++t) {
@@ -130,7 +130,7 @@ arma::cube transition(arma::cube N,
 //' @export
 // [[Rcpp::export]]
 arma::mat reproduce(arma::cube N,
-                     arma::vec f) {
+                    arma::vec f) {
   arma::mat y(N.n_rows, N.n_cols, arma::fill::zeros);
 
   for(arma::uword i = 0; i < N.n_slices; ++i){
