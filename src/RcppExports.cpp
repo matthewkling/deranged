@@ -55,11 +55,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sim
+arma::cube sim(arma::cube N, arma::field<arma::cube> env, arma::mat alpha, arma::cube beta, arma::cube gamma, arma::vec fecundity, arma::mat nb, bool reflect, bool rand, int seed, int record, arma::uword nsteps);
+RcppExport SEXP _stranger_sim(SEXP NSEXP, SEXP envSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP fecunditySEXP, SEXP nbSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP, SEXP recordSEXP, SEXP nstepsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type N(NSEXP);
+    Rcpp::traits::input_parameter< arma::field<arma::cube> >::type env(envSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type fecundity(fecunditySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< bool >::type reflect(reflectSEXP);
+    Rcpp::traits::input_parameter< bool >::type rand(randSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< int >::type record(recordSEXP);
+    Rcpp::traits::input_parameter< arma::uword >::type nsteps(nstepsSEXP);
+    rcpp_result_gen = Rcpp::wrap(sim(N, env, alpha, beta, gamma, fecundity, nb, reflect, rand, seed, record, nsteps));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stranger_transition", (DL_FUNC) &_stranger_transition, 7},
     {"_stranger_reproduce", (DL_FUNC) &_stranger_reproduce, 2},
     {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 5},
+    {"_stranger_sim", (DL_FUNC) &_stranger_sim, 12},
     {NULL, NULL, 0}
 };
 

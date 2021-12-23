@@ -3,7 +3,7 @@
 #' Generate data structure for species-level parameters.
 #'
 #' @param n_env Number of environmental variables (integer).
-#' @param names Class names (character vector).
+#' @param names Demographic stage names (character vector).
 #' @return A list of demographic and dispersal parameter objects.
 #' @export
 species_template <- function(n_env = 1,
@@ -25,29 +25,26 @@ species_template <- function(n_env = 1,
 #'
 #' @param n_row Number of rows in spatial grid.
 #' @param n_col Number of columns in spatial grid.
-#' @param n_steps Number of time steps for environmental variables.
 #' @param n_env Number of environmental variables.
-#' @param names Class names (character vector).
+#' @param n_steps Number of time steps for environmental variables.
+#' @param names Demographic stage names (character vector).
 #' @return A list of demographic and dispersal parameter objects.
 #' @export
 landscape_template <- function(n_row = 10, n_col = 10,
                                n_steps = 1, n_env = 1,
                                names = c("s", "j", "a")){
 
-  # environmental data -- 4d array (space, space, time, variable)
-  e <- array(0, c(n_row, n_col, n_steps, n_env),
-             dimnames = list(NULL, NULL, paste0("t", 1:n_steps), paste0("v", 1:n_env)))
+  # environmental data -- 4d array (space, space, variable, time)
+  e <- array(0, c(n_row, n_col, n_env, n_steps),
+             dimnames = list(NULL, NULL, paste0("v", 1:n_env), paste0("t", 1:n_steps)))
 
-  # initial population rasters -- 3d array (space, space, time)
-  n <- array(0, c(n_row, n_col, 3),
+  # initial population rasters -- 3d array (space, space, stage)
+  n <- array(0, c(n_row, n_col, length(names)),
              dimnames = list(NULL, NULL, names))
 
   list(e = e,
        n = n)
 }
-
-
-
 
 
 #' Run a range simulation
@@ -68,37 +65,17 @@ simulate <- function(sp,
                      randomize = TRUE,
                      reflect = TRUE,
                      record = 3,
+                     seed = 1,
                      ...){
 
-  neighbors <- neighborhood(sp$kernel, ...)
-
-  n <- as.array(ls$n)
-
-  d <- array(NA, c(dim(n)[1:2], n_steps + 1),
-             dimnames = list(1:dim(n)[1],
-                             1:dim(n)[2],
-                             0:n_steps))
-  d[ , , 1] <- n[ , , record]
-
-  e <- as.array(ls$e)
-  if(dim(e)[3] == n_steps){ ei <- 1:n_steps}else{ei <- rep(1L, n_steps)}
-
-  pb <- txtProgressBar(min = 0, max = n_steps, initial = 0, style = 3)
-  for(i in 1:n_steps){
-    d[ , , i + 1] <- n[ , , record]
-    n <- transition(n,
-                    E = array(e[, , ei[i], ], dim(e)[c(1, 2, 4)]),
-                    alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma,
-                    rand = randomize,
-                    seed = sample(1e8, 1))
-    n[, , 1] <- n[, , 1] + disperse(reproduce(n, f = sp$fecundity),
-                                    neighbors,
-                                    reflect = reflect,
-                                    rand = randomize,
-                                    seed = sample(1e8, 1))
-    setTxtProgressBar(pb, i)
-  }
-
-  return(d)
+  sim(N = ls$n,
+      env = lapply(1:dim(ls$e)[4], function(i) array(ls$e[,,,i], dim(ls$e)[1:3])),
+      alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma, fecundity = sp$fecundity,
+      nb = neighborhood(sp$kernel, ...),
+      nsteps = n_steps,
+      rand = randomize,
+      reflect = reflect,
+      record = record - 1,
+      seed = seed)
 }
 

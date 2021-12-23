@@ -21,7 +21,7 @@ landscape_template(
 
 \item{n_env}{Number of environmental variables.}
 
-\item{names}{Class names (character vector).}
+\item{names}{Demographic stage names (character vector).}
 }
 \value{
 A list of demographic and dispersal parameter objects.

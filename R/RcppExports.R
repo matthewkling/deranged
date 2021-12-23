@@ -4,7 +4,7 @@
 #' Perform a stage-based demographic transition
 #'
 #' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
-#' @param E A 4-D array of environmental data (x, y, time, variable).
+#' @param E A 3-D array of environmental data (x, y, variable).
 #' @param alpha A matrix of transition intercepts (to, from).
 #' @param beta A 3-D array of density dependence effects (to, from, modifier).
 #' @param gamma A 3-D array of environmental effects (to, from, variable).
@@ -37,5 +37,20 @@ reproduce <- function(N, f) {
 #' @export
 disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
     .Call(`_stranger_disperse`, S, N, reflect, rand, seed)
+}
+
+#' Run a range simulation
+#'
+#' @param N A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).
+#' @param env A list of environmental data. Each element list element should be a 3-D array of dimensions (x, y, variable).
+#' The list should have one element for time-invariant environment, or \code{nsteps} elements for time-varying environment.
+#' @param alpha, \code{beta, gamma, fecundity} Demographic parameters; see \code{?transition} and \code{?reproduce}.
+#' @param nb Neighborhood matrix; e.g. output from \code{neighborhood}.
+#' @param rand Randomize transitions instead of using matrix multiplication? (Boolean, default = TRUE).
+#' @param seed Integer to seed random number generator.
+#' @return A 3-D array of population numbers for each life stage.
+#' @export
+sim <- function(N, env, alpha, beta, gamma, fecundity, nb, reflect = TRUE, rand = TRUE, seed = 1L, record = 0L, nsteps = 100L) {
+    .Call(`_stranger_sim`, N, env, alpha, beta, gamma, fecundity, nb, reflect, rand, seed, record, nsteps)
 }
 

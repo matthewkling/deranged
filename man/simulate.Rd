@@ -11,6 +11,7 @@ simulate(
   randomize = TRUE,
   reflect = TRUE,
   record = 3,
+  seed = 1,
   ...
 )
 }

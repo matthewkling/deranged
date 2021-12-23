@@ -9,7 +9,7 @@ transition(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L)
 \arguments{
 \item{N}{A 3-D array of population numbers for each life stage, over a spatial grid (x, y, class).}
 
-\item{E}{A 4-D array of environmental data (x, y, time, variable).}
+\item{E}{A 3-D array of environmental data (x, y, variable).}
 
 \item{alpha}{A matrix of transition intercepts (to, from).}
 

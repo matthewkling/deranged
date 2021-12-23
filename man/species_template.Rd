@@ -9,7 +9,7 @@ species_template(n_env = 1, names = c("s", "j", "a"))
 \arguments{
 \item{n_env}{Number of environmental variables (integer).}
 
-\item{names}{Class names (character vector).}
+\item{names}{Demographic stage names (character vector).}
 }
 \value{
 A list of demographic and dispersal parameter objects.

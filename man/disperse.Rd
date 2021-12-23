@@ -4,7 +4,7 @@
 \alias{disperse}
 \title{Simulate dispersal across a spatial grid}
 \usage{
-disperse(S, N, ind, reflect = TRUE, rand = TRUE, seed = 1L)
+disperse(S, N, reflect = TRUE, rand = TRUE, seed = 1L)
 }
 \arguments{
 \item{S}{A matrix of seed counts across a spatial grid.}
