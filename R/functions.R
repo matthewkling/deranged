@@ -9,15 +9,17 @@
 species_template <- function(n_env = 1,
                              names = c("s", "j", "a")){
 
-  list(alpha = matrix(0, 3, 3,
+  n <- length(names)
+
+  list(alpha = matrix(0, n, n,
                       dimnames = list(names, names)),
-       beta = array(0, c(3, 3, 3),
+       beta = array(0, c(n, n, n),
                     dimnames = list(names, names, names)),
-       gamma = array(0, c(3, 3, n_env),
+       gamma = array(0, c(n, n, n_env),
                      dimnames = list(names, names, paste0("v", 1:n_env))),
        fecundity = setNames(rep(0, length(names)), names),
        kernel = list(fun = dlognormal,
-                     params = list(L = 1, S = 1)))
+                     params = list(L = 1000, S = 1))) # distance units are assumed to be meters
 }
 
 
@@ -43,7 +45,8 @@ landscape_template <- function(n_row = 10, n_col = 10,
              dimnames = list(NULL, NULL, names))
 
   list(e = e,
-       n = n)
+       n = n,
+       cell_res = 1000) # grid cell resolution, in meters
 }
 
 
@@ -58,7 +61,6 @@ landscape_template <- function(n_row = 10, n_col = 10,
 #' @param ... Further arguments passed to \code{neighborhood()}.
 #' @return An array of population values over space and time, for the class specified in \code{record}.
 #' @export
-#' @importFrom utils setTxtProgressBar txtProgressBar
 simulate <- function(sp,
                      ls,
                      n_steps = 100,
@@ -71,7 +73,7 @@ simulate <- function(sp,
   sim(N = ls$n,
       env = lapply(1:dim(ls$e)[4], function(i) array(ls$e[,,,i], dim(ls$e)[1:3])),
       alpha = sp$alpha, beta = sp$beta, gamma = sp$gamma, fecundity = sp$fecundity,
-      nb = neighborhood(sp$kernel, ...),
+      nb = neighborhood(sp$kernel, cell_res = ls$cell_res, ...),
       nsteps = n_steps,
       rand = randomize,
       reflect = reflect,

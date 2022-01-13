@@ -15,8 +15,7 @@ LinkingTo:
 Imports: 
     Rcpp,
     rlang,
-    stats,
-    utils
+    stats
 Suggests:
     ggplot2,
     dplyr,
