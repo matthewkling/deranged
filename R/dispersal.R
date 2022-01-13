@@ -50,6 +50,15 @@ neighborhood <- function(kernel, diameter = 7, method = "area", res = 11){
     invoke(kernel$fun, kernel$params)
   }
 
+  # sanity check for kernel overflow; nontrivial percentages under-represent long-distance dispersal
+  report_coverage <- function(){
+    p <- integrate(function(x) kdf(x) * 2 * pi * x,
+                   0, diameter + .5)
+    message("NOTE: ~", signif(100 - p$value * 100, 7),
+            "% of kernel proability falls beyond neighborhood before normalization")
+  }
+  report_coverage()
+
   # calculate distances and probabilities
   if(method == "centroid") res <- 1
   radius <- (diameter * res - 1) / 2 # radius of high-res grid
