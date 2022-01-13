@@ -49,7 +49,7 @@ neighborhood <- function(kernel, diameter = 7, cell_res, method = "area", res = 
 
   # kernel density function, assuming x unit is grid cells
   kdf <- function(x){
-    kernel$params$x <- x
+    kernel$params$x <- x * cell_res
     invoke(kernel$fun, kernel$params)
   }
 
