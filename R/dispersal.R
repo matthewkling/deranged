@@ -47,47 +47,45 @@ agg <- function(x, res, fun = sum, ...){
 #' @importFrom rlang invoke
 neighborhood <- function(kernel, diameter = 7, cell_res, method = "area", res = 11){
 
-  # kernel density function, assuming x unit is grid cells
+  # kernel density function
   kdf <- function(x){
-    kernel$params$x <- x * cell_res
+    kernel$params$x <- x
     invoke(kernel$fun, kernel$params)
   }
 
-  # sanity check for kernel overflow; nontrivial percentages under-represent long-distance dispersal
-  report_coverage <- function(){
-    p <- integrate(function(x) kdf(x) * 2 * pi * x,
-                   0, diameter / 2 * cell_res)
-    message("NOTE: ~", signif(100 - p$value * 100, 7),
-            "% of kernel proability falls beyond neighborhood before normalization")
-  }
-  report_coverage()
+  radius <- (diameter - 1) / 2 # radius of neighborhood (cells)
+  d <- expand.grid(x = -radius:radius, y = -radius:radius)
+  d$d <- sqrt(d$x^2 + d$y^2)
+  for(z in unique(d$d)) d$u[d$d == z][1] <- z
+  crs <- d[!is.na(d$u),]
 
-  # calculate distances (in grid cells, not meters) and probabilities
-  if(method == "centroid") res <- 1
-  radius <- (diameter * res - 1) / 2 # radius of high-res grid
-  r <- ifelse(method == "area", (res - 1) / 2, 0) # radius of coarse cell
-  d <- expand.grid(x = -radius:radius,
-                   y = -radius:radius,
-                   xo = -r:r,
-                   yo = -r:r)
-  d$cd <- sqrt(d$x^2 + d$y^2) / res # dist from absolute center
-  d$d <- sqrt((d$x - d$xo)^2 + (d$y - d$yo)^2) / res # distance from origin
-  d$d <- ifelse(d$cd > (radius / res), Inf, d$d)
-  d$p <- kdf(d$d * cell_res)
+  r <- (res - 1) / 2 # radius of coarse cell, in fine units
+  if(method == "centoid") r <- 0
 
-  # aggregate across origins
-  if(method == "area"){
-    d <- aggregate(d$p, by = list(xx = d$x, yy = d$y),
-                   FUN = mean, na.rm = T)
-    d$p <- d$x
+  oo <- (-r:r) / res # offset
+  od <- (-r:r) / res # offset
+  if(method == "mixed") oo <- 0
+
+  for(i in 1:nrow(crs)){
+    x <- expand.grid(xo = oo, yo = oo, xd = od + crs$x[i], yd = od + crs$y[i])
+    dist <- sqrt((x$xd - x$xo) ^ 2 + (x$yd - x$yo) ^ 2)
+    cdist <- sqrt(x$xd ^ 2 + x$yd ^ 2)
+    dist <- ifelse(cdist > diameter / 2, Inf, dist) # clip to circle
+    ci <- d$d == crs$d[i]
+    d$p[ci] <- sum(kdf(dist * cell_res), na.rm = T)
+    d$edge[ci] <- ! mean(dist == Inf) %in% 0:1
   }
 
-  # aggregate across destinations
-  p <- agg(matrix(d$p, diameter * res, diameter * res),
-           res,
-           sum, na.rm = T)
+  # reassign probability mass that falls out of bounds to boundary cells
+  # (even allocation, which is imperfect; arc length would be better)
+  ib <- integrate(function(x) kdf(x) * 2 * pi * x,
+                  0, diameter / 2 * cell_res)$value
+  d$ob <- 0
+  d$ob[d$edge] <- (1 - ib) / sum(d$edge)
 
-  # normalize
-  p <- p / sum(p)
-  return(p)
+  # normalize probabilities, sum inbounds and outbounds, format
+  d$ib <- d$p / sum(d$p) * ib
+  d$total <- d$ib + d$ob
+  matrix(d$total, diameter, diameter)
 }
+
