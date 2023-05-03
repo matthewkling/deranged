@@ -13,13 +13,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# stranger: spatiotemporal range simulation in R
+# stranger: [s]{.underline}pa[t]{.underline}iotemporal [range]{.underline} simulation in [R]{.underline}
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-This R package provides tools for simulating species range dynamics. Range simulations combine a demographic module that simulates local population change, and a dispersal module that simulates movement among grid cells.
+This R package provides tools for simulating species range dynamics. Range simulations combine a demographic module that simulates local population change as a function of species characteristics and environmental conditions, and a dispersal module that simulates movement among grid cells.
 
+This is a project of [Barracuda](https://biobarracuda.org/), an NSF-funded research program focused on modeling landscape adaptation to climate change. The package is still under development, and API changes and additional functions will be implemented over time.
 
 ## Installation
 
@@ -32,11 +34,9 @@ devtools::install_github("matthewkling/stranger")
 
 If you're on MacOS and encounter compilation errors when attempting to install the package, installing the [latest version of gfortran](https://github.com/fxcoudert/gfortran-for-macOS/releases) may solve the issue.
 
-
 ## Example
 
 In this toy example we'll run a range simulation for an imaginary plant species. We'll use a stage-based population matrix model representing three life history stages: seeds, juveniles, and adults.
-
 
 #### Input data
 
@@ -51,10 +51,9 @@ ls$n[10,10,3] <- 10 # start with 10 adults in one grid cell
 ls$e[] <- seq(0, 1, length.out = prod(dim(ls$e))) # set environmental values
 ```
 
-
 #### Species parameters
 
-The other input to the simulation is a set of parameters representing the species' biology. This includes demographic parameters and dispersal parameters. Here we'll use `species_template` to create a parameter object, and then set some of the parameter values to fit our species. 
+The other input to the simulation is a set of parameters representing the species' biology. This includes demographic parameters and dispersal parameters. Here we'll use `species_template` to create a parameter object, and then set some of the parameter values to fit our species.
 
 For this matrix model, the demographic parameters represent probabilities of transitioning from one stage to another at each time step; these probabilities can be constant, or they can vary as a function of population levels (density dependence) or environmental values (environmental dependence). A given transition probability is calculated as the intercept term from the `alpha` matrix, plus the coefficients from the `beta` array multiplied by population levels, plus the coefficients from the `gamma` array multiplied by environmental values. In this example we'll make juvenile survival depend on the environment, and we'll make juvenile-adult transitions depend on the number of adults.
 
@@ -81,7 +80,6 @@ sp$kernel$params$L <- .2
 sp$kernel$params$S <- 2
 ```
 
-
 #### Simulation
 
 Using these landscape and species inputs, we can now `simulate` range dynamics over time. At each time step, the species goes through a demographic transition, and then dispersal occurs. The function returns an array of populations over space and time.
@@ -91,6 +89,7 @@ d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)
 ```
+
 We can quickly visualize the output using a couple plotting functions. The first plot below shows population time series for 10 random grid cells, with populations in many cells leveling off due to density dependence. The second plot shows snapshots of spatial population patterns over time, with an east-west gradient in population size resulting from the spatial environmental gradient.
 
 ```{r timeseries, message = FALSE, warning = FALSE}

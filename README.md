@@ -1,15 +1,21 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# stranger: spatiotemporal range simulation in R
+# stranger: <u>s</u>pa<u>t</u>iotemporal <u>range</u> simulation in <u>R</u>
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 This R package provides tools for simulating species range dynamics.
 Range simulations combine a demographic module that simulates local
-population change, and a dispersal module that simulates movement among
-grid cells.
+population change as a function of species characteristics and
+environmental conditions, and a dispersal module that simulates movement
+among grid cells.
+
+This is a project of [Barracuda](https://biobarracuda.org/), an
+NSF-funded research program focused on modeling landscape adaptation to
+climate change. The package is still under development, and API changes
+and additional functions will be implemented over time.
 
 ## Installation
 
@@ -110,6 +116,9 @@ an array of populations over space and time.
 d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)
+#> Warning: `invoke()` is deprecated as of rlang 0.4.0.
+#> Please use `exec()` or `inject()` instead.
+#> This warning is displayed once every 8 hours.
 ```
 
 We can quickly visualize the output using a couple plotting functions.
