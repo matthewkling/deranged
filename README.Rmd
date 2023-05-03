@@ -44,6 +44,7 @@ First we'll mock up some spatial data. The convenience function `landscape_templ
 
 ```{r spatial, message = FALSE, warning = FALSE}
 library(stranger)
+set.seed(123)
 
 stages <- c("s", "j", "a") # names for life history stages
 ls <- landscape_template(n_row = 25, n_col = 25, names = stages) # spatial data template
@@ -76,8 +77,8 @@ sp$alpha["a", "j"] <- .1
 sp$beta["a", "j", "a"] <- -.001
 
 # parameters for lognormal dispersal kernel
-sp$kernel$params$L <- .2
-sp$kernel$params$S <- 2
+sp$kernel$params$L <- .3
+sp$kernel$params$S <- 3
 ```
 
 #### Simulation

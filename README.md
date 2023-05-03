@@ -53,6 +53,7 @@ gradient from 0 to 1.
 
 ``` r
 library(stranger)
+set.seed(123)
 
 stages <- c("s", "j", "a") # names for life history stages
 ls <- landscape_template(n_row = 25, n_col = 25, names = stages) # spatial data template
@@ -101,8 +102,8 @@ sp$alpha["a", "j"] <- .1
 sp$beta["a", "j", "a"] <- -.001
 
 # parameters for lognormal dispersal kernel
-sp$kernel$params$L <- .2
-sp$kernel$params$S <- 2
+sp$kernel$params$L <- .3
+sp$kernel$params$S <- 3
 ```
 
 #### Simulation
@@ -116,9 +117,6 @@ an array of populations over space and time.
 d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)
-#> Warning: `invoke()` is deprecated as of rlang 0.4.0.
-#> Please use `exec()` or `inject()` instead.
-#> This warning is displayed once every 8 hours.
 ```
 
 We can quickly visualize the output using a couple plotting functions.
