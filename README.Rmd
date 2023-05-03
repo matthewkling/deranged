@@ -84,7 +84,7 @@ sp$kernel$params$S <- 2
 
 Using these landscape and species inputs, we can now `simulate` range dynamics over time. At each time step, the species goes through a demographic transition, and then dispersal occurs. The function returns an array of populations over space and time.
 
-```{r simulation, echo = T, results = 'hide'}
+```{r simulation, echo = T, results = 'hide', message = FALSE, warning = FALSE}
 d <- simulate(sp, ls, # data and parameter inputs from above
               n_steps = 200, # number of iterations to simulate 
               record = 3) # record populations for life stage 3 (adults)

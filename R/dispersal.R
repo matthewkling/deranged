@@ -44,13 +44,12 @@ agg <- function(x, res, fun = sum, ...){
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
-#' @importFrom rlang invoke
 neighborhood <- function(kernel, diameter = 7, cell_res, method = "area", res = 11){
 
   # kernel density function
   kdf <- function(x){
     kernel$params$x <- x
-    invoke(kernel$fun, kernel$params)
+    do.call(kernel$fun, kernel$params)
   }
 
   radius <- (diameter - 1) / 2 # radius of neighborhood (cells)
