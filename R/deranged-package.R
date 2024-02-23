@@ -1,5 +1,5 @@
 ## usethis namespace: start
-#' @useDynLib stranger, .registration = TRUE
+#' @useDynLib deranged, .registration = TRUE
 ## usethis namespace: end
 NULL
 

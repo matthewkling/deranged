@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // transition
 arma::cube transition(arma::cube N, arma::cube E, arma::mat alpha, arma::cube beta, arma::cube gamma, bool rand, int seed);
-RcppExport SEXP _stranger_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP randSEXP, SEXP seedSEXP) {
+RcppExport SEXP _deranged_transition(SEXP NSEXP, SEXP ESEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP randSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // reproduce
 arma::mat reproduce(arma::cube N, arma::vec f);
-RcppExport SEXP _stranger_reproduce(SEXP NSEXP, SEXP fSEXP) {
+RcppExport SEXP _deranged_reproduce(SEXP NSEXP, SEXP fSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // disperse
 arma::mat disperse(arma::mat S, arma::mat N, bool reflect, bool rand, int seed);
-RcppExport SEXP _stranger_disperse(SEXP SSEXP, SEXP NSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP) {
+RcppExport SEXP _deranged_disperse(SEXP SSEXP, SEXP NSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -57,7 +57,7 @@ END_RCPP
 }
 // sim
 arma::cube sim(arma::cube N, arma::field<arma::cube> env, arma::mat alpha, arma::cube beta, arma::cube gamma, arma::vec fecundity, arma::mat nb, bool reflect, bool rand, int seed, int record, arma::uword nsteps);
-RcppExport SEXP _stranger_sim(SEXP NSEXP, SEXP envSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP fecunditySEXP, SEXP nbSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP, SEXP recordSEXP, SEXP nstepsSEXP) {
+RcppExport SEXP _deranged_sim(SEXP NSEXP, SEXP envSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP fecunditySEXP, SEXP nbSEXP, SEXP reflectSEXP, SEXP randSEXP, SEXP seedSEXP, SEXP recordSEXP, SEXP nstepsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,14 +79,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_stranger_transition", (DL_FUNC) &_stranger_transition, 7},
-    {"_stranger_reproduce", (DL_FUNC) &_stranger_reproduce, 2},
-    {"_stranger_disperse", (DL_FUNC) &_stranger_disperse, 5},
-    {"_stranger_sim", (DL_FUNC) &_stranger_sim, 12},
+    {"_deranged_transition", (DL_FUNC) &_deranged_transition, 7},
+    {"_deranged_reproduce", (DL_FUNC) &_deranged_reproduce, 2},
+    {"_deranged_disperse", (DL_FUNC) &_deranged_disperse, 5},
+    {"_deranged_sim", (DL_FUNC) &_deranged_sim, 12},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_stranger(DllInfo *dll) {
+RcppExport void R_init_deranged(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

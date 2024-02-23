@@ -1,30 +1,30 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# stranger: <u>s</u>pa<u>t</u>iotemporal <u>range</u> simulation in <u>R</u>
+# DERANGED: DEmographic RANGE modeling with Dispersal
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-This R package provides tools for simulating species range dynamics.
-Range simulations combine a demographic module that simulates local
-population change as a function of species characteristics and
+This R package provides tools for simulating species geographic range
+dynamics. Range simulations combine a demographic module that simulates
+local population change as a function of species characteristics and
 environmental conditions, and a dispersal module that simulates movement
 among grid cells.
 
 This is a project of [Barracuda](https://biobarracuda.org/), an
 NSF-funded research program focused on modeling landscape adaptation to
 climate change. The package is still under development, and API changes
-and additional functions will be implemented over time.
+and additional features will be implemented over time.
 
 ## Installation
 
-You can install the development version of stranger from
+You can install the development version of deranged from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("matthewkling/stranger")
+devtools::install_github("matthewkling/deranged")
 ```
 
 If you’re on MacOS and encounter compilation errors when attempting to
@@ -52,7 +52,7 @@ time-invariant environmental grid with values ranging in a spatial
 gradient from 0 to 1.
 
 ``` r
-library(stranger)
+library(deranged)
 set.seed(123)
 
 stages <- c("s", "j", "a") # names for life history stages

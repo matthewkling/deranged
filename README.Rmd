@@ -13,23 +13,23 @@ knitr::opts_chunk$set(
 )
 ```
 
-# stranger: [s]{.underline}pa[t]{.underline}iotemporal [range]{.underline} simulation in [R]{.underline}
+# DERANGED: DEmographic RANGE modeling with Dispersal
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-This R package provides tools for simulating species range dynamics. Range simulations combine a demographic module that simulates local population change as a function of species characteristics and environmental conditions, and a dispersal module that simulates movement among grid cells.
+This R package provides tools for simulating species geographic range dynamics. Range simulations combine a demographic module that simulates local population change as a function of species characteristics and environmental conditions, and a dispersal module that simulates movement among grid cells.
 
-This is a project of [Barracuda](https://biobarracuda.org/), an NSF-funded research program focused on modeling landscape adaptation to climate change. The package is still under development, and API changes and additional functions will be implemented over time.
+This is a project of [Barracuda](https://biobarracuda.org/), an NSF-funded research program focused on modeling landscape adaptation to climate change. The package is still under development, and API changes and additional features will be implemented over time.
 
 ## Installation
 
-You can install the development version of stranger from [GitHub](https://github.com/) with:
+You can install the development version of deranged from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("matthewkling/stranger")
+devtools::install_github("matthewkling/deranged")
 ```
 
 If you're on MacOS and encounter compilation errors when attempting to install the package, installing the [latest version of gfortran](https://github.com/fxcoudert/gfortran-for-macOS/releases) may solve the issue.
@@ -43,7 +43,7 @@ In this toy example we'll run a range simulation for an imaginary plant species.
 First we'll mock up some spatial data. The convenience function `landscape_template` generates a skeleton object with the necessary data structure, a list with two components. The first piece, `n`, is a 3-D array of initial population sizes for each life history stage for each spatial grid cell; here we'll start with 10 adults in one of the grid cells. The second piece, `e`, is a 4-D array of environmental data, which maximally can include multiple environmental variables that vary spatially and temporally; in this example we'll use a single, time-invariant environmental grid with values ranging in a spatial gradient from 0 to 1.
 
 ```{r spatial, message = FALSE, warning = FALSE}
-library(stranger)
+library(deranged)
 set.seed(123)
 
 stages <- c("s", "j", "a") # names for life history stages

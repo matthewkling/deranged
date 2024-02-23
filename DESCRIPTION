@@ -1,10 +1,10 @@
-Package: stranger
-Title: Spatiotemporal range simulation in R
+Package: deranged
+Title: Demographic species range modeling with dispersal
 Version: 0.0.0.9000
 Authors@R: 
     person("Matthew", "Kling", email = "mkling@uvm.edu", role = c("aut", "cre"))
 Description: Functions for simulating species range dynamics based on 
-    demographic parameters.
+    demography and dispersal.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -20,5 +20,5 @@ Suggests:
     ggplot2,
     dplyr,
     tidyr
-URL: https://github.com/matthewkling/stranger
-BugReports: https://github.com/matthewkling/stranger/issues
+URL: https://github.com/matthewkling/deranged
+BugReports: https://github.com/matthewkling/deranged/issues

@@ -13,7 +13,7 @@
 #' @return A 3-D array of population numbers for each life stage.
 #' @export
 transition <- function(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L) {
-    .Call(`_stranger_transition`, N, E, alpha, beta, gamma, rand, seed)
+    .Call(`_deranged_transition`, N, E, alpha, beta, gamma, rand, seed)
 }
 
 #' Reproduction across a spatial grid
@@ -23,7 +23,7 @@ transition <- function(N, E, alpha, beta, gamma, rand = TRUE, seed = 1L) {
 #' @return A matrix.
 #' @export
 reproduce <- function(N, f) {
-    .Call(`_stranger_reproduce`, N, f)
+    .Call(`_deranged_reproduce`, N, f)
 }
 
 #' Simulate dispersal across a spatial grid
@@ -36,7 +36,7 @@ reproduce <- function(N, f) {
 #' @return A matrix of post-dispersal seed counts of the same dimension as \code{S}.
 #' @export
 disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
-    .Call(`_stranger_disperse`, S, N, reflect, rand, seed)
+    .Call(`_deranged_disperse`, S, N, reflect, rand, seed)
 }
 
 #' Run a range simulation
@@ -51,6 +51,6 @@ disperse <- function(S, N, reflect = TRUE, rand = TRUE, seed = 1L) {
 #' @return A 3-D array of population numbers for each life stage.
 #' @export
 sim <- function(N, env, alpha, beta, gamma, fecundity, nb, reflect = TRUE, rand = TRUE, seed = 1L, record = 0L, nsteps = 100L) {
-    .Call(`_stranger_sim`, N, env, alpha, beta, gamma, fecundity, nb, reflect, rand, seed, record, nsteps)
+    .Call(`_deranged_sim`, N, env, alpha, beta, gamma, fecundity, nb, reflect, rand, seed, record, nsteps)
 }
 
