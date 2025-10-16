@@ -27,7 +27,7 @@ agg <- function(x, res, fun = sum, ...){
 }
 
 
-#' Neighborhood dispersal probability matrix.
+#' Neighborhood dispersal probability matrix
 #'
 #' This function uses numerical integration of a dispersal kernel to construct
 #' a matrix representing the probability that dispersal originating in a given
@@ -44,7 +44,9 @@ agg <- function(x, res, fun = sum, ...){
 #' @return A matrix of dispersal probabilities.
 #' @export
 #' @importFrom stats integrate
-neighborhood <- function(kernel, diameter = 7, cell_res, method = "area", res = 11){
+neighborhood <- function(kernel, diameter = 7, cell_res, method = c("area", "area-centroid", "centroid"), res = 11){
+
+  method <- match.arg(method)
 
   # kernel density function
   kdf <- function(x){
@@ -59,11 +61,11 @@ neighborhood <- function(kernel, diameter = 7, cell_res, method = "area", res = 
   crs <- d[!is.na(d$u),]
 
   r <- (res - 1) / 2 # radius of coarse cell, in fine units
-  if(method == "centoid") r <- 0
+  if(method == "centroid") r <- 0
 
   oo <- (-r:r) / res # offset
   od <- (-r:r) / res # offset
-  if(method == "mixed") oo <- 0
+  if(method == "area-centroid") oo <- 0
 
   for(i in 1:nrow(crs)){
     x <- expand.grid(xo = oo, yo = oo, xd = od + crs$x[i], yd = od + crs$y[i])

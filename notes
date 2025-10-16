@@ -1,0 +1,36 @@
+
+BUGS
+- should dd operate per area?
+- neighborhood methods (centoid, mixed, etc) have typos and naming inconsistencies
+
+
+
+FEATURES
+- add option for multinomial probability response form
+- allow logging of multiple classes
+- allow dispersal of multiple classes
+- allow spatially selective dispersal
+- generalize to non-demographic markov models (e.g. state and transition)?
+- additional functions for plotting, import/expot, etc.
+- add kernel optimization functionality
+- add multispecies mode, with additional heterospecific dd params?
+- add support for anisotropic kernels?
+- allow nonlinear (quadratic) response terms? or user can supply as additional squared variable
+- add support for hex grids?
+
+COMPUTATION
+- feature additions
+- debugging
+- unit testing?
+- optimization
+- spacetime?
+
+API
+- reassess overall structure and design
+- define object classes?
+
+DOCUMENTATION
+- pkgdown site
+- flesh out function docs
+- vignettes
+- add example datasets
